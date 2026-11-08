@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حور کالکشن | پوشاک زنانه اسپرت</title>
+<link rel="icon" type="image/jpeg" href="logo.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== LANDING PAGE ===== -->
+<div id="landing-page">
+    <div class="landing-box">
+        <div class="landing-logo-wrap">
+            <img src="logo.jpg" alt="حور کالکشن" onerror="this.parentElement.innerHTML='<span style=\'font-size:26px;font-weight:800;color:#A85D73;font-family:serif;\'>Hoor</span>'">
+        </div>
+        <h1 class="landing-title">حور کالکشن</h1>
+        <p class="landing-sub">
+            <span class="sub-line">پروانه‌ای برای بال‌های تو</span>
+            <span class="sub-line small">پوشاک زنانه اسپرت با طعم لطافت</span>
+        </p>
+        <button class="enter-btn" onclick="goToShop()">ورود به فروشگاه</button>
+    </div>
+</div>
+
+<!-- ===== MAIN PAGE ===== -->
+<div id="main-page">
+
+    <!-- Header -->
+    <header class="site-header">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <div class="header-logo-wrap">
+            <img src="logo.jpg" alt="حور" onerror="this.parentElement.innerHTML='<span style=\'font-size:18px;font-weight:800;color:#A85D73;font-family:serif;\'>Hoor</span>'">
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="openFavorites()">
+                <span class="heart-icon">♡</span>
+            </button>
+            <button class="icon-btn" onclick="openCart()">
+                <span class="bag-icon">🛍</span>
+                <span class="badge" id="cartBadge" style="display:none;">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Side Menu -->
+    <div id="sideMenu" class="side-menu">
+        <div class="menu-header">
+            <div class="menu-logo-wrap">
+                <img src="logo.jpg" alt="حور" onerror="this.parentElement.innerHTML='<span style=\'font-size:16px;font-weight:800;color:#A85D73;font-family:serif;\'>Hoor</span>'">
+            </div>
+            <button onclick="toggleMenu()">✕</button>
+        </div>
+        <button onclick="openUserAccount()">👤 <span>حساب کاربری</span></button>
+        <button onclick="openOrders()">📦 <span>سفارشات من</span></button>
+        <button onclick="openFavorites()">❤️ <span>علاقه‌مندی‌ها</span></button>
+        <div class="menu-divider"></div>
+        <button onclick="openContact()">📞 <span>تماس با ما</span></button>
+        <button onclick="openAbout()">ℹ️ <span>درباره حور</span></button>
+        <button onclick="openInstagram()">📱 <span>اینستاگرام</span></button>
+    </div>
+    <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+
+    <!-- Search -->
+    <div class="search-section">
+        <img src="butterfly.png" class="search-butterfly" alt="">
+        <input type="text" class="search-input" id="searchInput" placeholder="جستجو در محصولات..." oninput="searchProducts()">
+        <div id="searchResults" class="search-results"></div>
+    </div>
+
+    <!-- Hero Slider with Navigation -->
+    <section class="hero-slider">
+        <div class="slides-wrapper" id="sliderWrapper">
+            <div class="slide slide-1">
+                <div class="slide-content">
+                    <h2>کالکشن جدید</h2>
+                    <p>پوشاک زنانه اسپرت با کیفیت بالا</p>
+                </div>
+            </div>
+            <div class="slide slide-2">
+                <div class="slide-content">
+                    <h2>تخفیف ویژه</h2>
+                    <p>تا ۴۰٪ تخفیف روی محصولات انتخابی</p>
+                </div>
+            </div>
+            <div class="slide slide-3">
+                <div class="slide-content">
+                    <h2>ارسال سریع</h2>
+                    <p>ارسال به سراسر کشور با تیپاکس</p>
+                </div>
+            </div>
+        </div>
+        <button class="slider-nav prev" onclick="slidePrev()">‹</button>
+        <button class="slider-nav next" onclick="slideNext()">›</button>
+        <div class="slider-dots" id="sliderDots"></div>
+    </section>
+
+    <!-- Categories (Horizontal Scroll) -->
+    <section class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">دسته‌بندی‌ها</h2>
+        </div>
+        <div class="categories-scroll" id="categoriesGrid"></div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="section-container">
+        <div class="section-header">
+            <h2 class="section-title">پیشنهاد ویژه</h2>
+            <a class="section-link" onclick="openAllProducts()">مشاهده همه ›</a>
+        </div>
+        <div class="products-grid" id="featuredGrid"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-logo-wrap">
+            <img src="logo.jpg" alt="حور کالکشن" onerror="this.parentElement.innerHTML='<span style=\'font-size:18px;font-weight:800;color:#A85D73;font-family:serif;\'>Hoor</span>'">
+        </div>
+        <div class="footer-item"><span class="icon">📍</span> درگز - جانبازان ۴ نبش کوچه آرامش</div>
+        <div class="footer-item"><span class="icon">🛍️</span> فروش فقط آنلاین</div>
+        <div class="footer-item"><span class="icon">🚚</span> ارسال با تیپاکس</div>
+        <div class="footer-item"><span class="icon">📞</span> ۰۹۱۵۵۸۳۸۷۰۷</div>
+        <div class="footer-item">
+            <span onclick="openInstagram()" class="footer-link" style="cursor:pointer;">Instagram</span>
+            <span style="color: #A09098; margin: 0 6px;">•</span>
+            <a href="https://wa.me/989155838707" target="_blank" class="footer-link">WhatsApp</a>
+        </div>
+        <span class="footer-divider"></span>
+        <div class="footer-copy">© ۱۴۰۵ حور کالکشن</div>
+    </footer>
+
+    <!-- Cart Bar -->
+    <div id="cartBar" class="cart-bar" style="display:none;">
+        <div class="cart-info">
+            <span id="cartCount">۰ آیتم</span>
+            <span id="cartTotal">۰ تومان</span>
+        </div>
+        <button onclick="openCart()">مشاهده سبد</button>
+    </div>
+
+</div>
+
+<!-- ===== ALL PRODUCTS PAGE ===== -->
+<div id="allProductsPage" class="all-products-page">
+    <header class="site-header">
+        <button class="menu-btn" onclick="closeAllProducts()">←</button>
+        <div class="header-logo"><h2 style="font-size:18px;color:#2D1F2A;">همه محصولات</h2></div>
+        <div class="header-actions">
+            <button class="icon-btn" onclick="openCart()">
+                <span class="bag-icon">🛍</span>
+                <span class="badge" id="cartBadge2" style="display:none;">0</span>
+            </button>
+        </div>
+    </header>
+    <div class="filter-tabs" id="filterTabs"></div>
+    <div class="products-grid" id="allProductsGrid" style="padding: 16px;"></div>
+</div>
+
+<!-- ===== MODALS ===== -->
+
+<div id="userModal" class="modal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('userModal')">✕</button>
+        <h2>حساب کاربری</h2>
+        <input type="tel" id="userPhone" placeholder="شماره موبایل">
+        <input type="text" id="userName" placeholder="نام و نام خانوادگی">
+        <input type="password" id="userPassword" placeholder="رمز عبور">
+        <button onclick="loginUser()">ورود / ثبت‌نام</button>
+    </div>
+</div>
+
+<div id="cartModal" class="modal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('cartModal')">✕</button>
+        <h2>سبد خرید</h2>
+        <div id="cartItems" class="cart-items"></div>
+        <div class="cart-total-box">
+            جمع کل:
+            <span id="cartModalTotal">۰ تومان</span>
+        </div>
+        <button onclick="checkout()">ادامه و پرداخت</button>
+    </div>
+</div>
+
+<div id="productModal" class="modal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('productModal')">✕</button>
+        <div id="productDetails"></div>
+    </div>
+</div>
+
+<div id="favoritesModal" class="modal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('favoritesModal')">✕</button>
+        <h2>علاقه‌مندی‌ها</h2>
+        <div id="favoritesList"></div>
+    </div>
+</div>
+
+<div id="contactModal" class="modal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('contactModal')">✕</button>
+        <h2>تماس با ما</h2>
+        <p style="text-align:center; margin: 20px 0; font-size: 18px; font-weight: 700; color:#A85D73;">۰۹۱۵۵۸۳۸۷۰۷</p>
+        <p style="text-align:center; color: #8B6B87;">جانبازان ۴ نبش کوچه آرامش</p>
+        <p style="text-align:center; color: #8B6B87; margin-top: 10px;">فروش فقط آنلاین</p>
+    </div>
+</div>
+
+<div id="aboutModal" class="modal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('aboutModal')">✕</button>
+        <h2>درباره حور</h2>
+        <p style="line-height:2; text-align:right; margin-top:15px; color: #5C4A56;">
+            حور کالکشن، فروشگاه آنلاین پوشاک زنانه اسپرت با هدف ارائه لباس‌های باکیفیت و به‌روز راه‌اندازی شده است.
+            ما تلاش می‌کنیم با انتخاب بهترین جنس‌ها و طراحی‌های مدرن، تجربه‌ای متفاوت برای شما بسازیم.
+        </p>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="script.js"></script>
+
+<!-- استیکرهای تزئینی -->
+<img src="butterfly.png" class="deco-butterfly-1" alt="">
+<img src="butterfly.png" class="deco-butterfly-2" alt="">
+<img src="flower.png" class="deco-flower-1" alt="">
+<img src="flower.png" class="deco-flower-2" alt="">
+
+<!-- ============ صفحه حساب کاربری ============ -->
+<div id="userPage" class="sub-page">
+    <header class="sub-page-header">
+        <button class="back-btn" onclick="closePage('userPage')">→</button>
+        <h2>حساب کاربری</h2>
+        <div></div>
+    </header>
+    <div class="sub-page-body">
+        <div id="userLoggedOut">
+            <div class="page-icon-circle">👤</div>
+            <h3 class="page-title">خوش آمدید</h3>
+            <p class="page-sub">برای ثبت سفارش و مشاهده تاریخچه، وارد شوید</p>
+            <div class="form-group">
+                <label>شماره موبایل</label>
+                <input type="tel" id="userPhoneSub" placeholder="۰۹۱۲۳۴۵۶۷۸۹">
+            </div>
+            <div class="form-group">
+                <label>نام و نام خانوادگی</label>
+                <input type="text" id="userNameSub" placeholder="نام شما">
+            </div>
+            <div class="form-group">
+                <label>رمز عبور</label>
+                <input type="password" id="userPasswordSub" placeholder="••••••">
+            </div>
+            <button class="primary-btn" onclick="loginUserSub()">ورود / ثبت‌نام</button>
+        </div>
+        <div id="userLoggedIn" style="display:none;">
+            <div class="page-icon-circle">👤</div>
+            <h3 class="page-title" id="welcomeName">خوش آمدید</h3>
+            <p class="page-sub" id="welcomePhone">۰۹۱۲۳۴۵۶۷۸۹</p>
+            <div class="menu-list">
+                <button onclick="closePage('userPage'); openPage('ordersPage')">
+                    <span>📦</span>
+                    <span>سفارشات من</span>
+                    <span class="arrow">‹</span>
+                </button>
+                <button onclick="closePage('userPage'); openPage('favoritesPage')">
+                    <span>❤️</span>
+                    <span>علاقه‌مندی‌ها</span>
+                    <span class="arrow">‹</span>
+                </button>
+                <button onclick="closePage('userPage'); openPage('contactPage')">
+                    <span>📞</span>
+                    <span>تماس با ما</span>
+                    <span class="arrow">‹</span>
+                </button>
+            </div>
+            <button class="logout-btn" onclick="logoutUser()">خروج از حساب</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ صفحه سفارشات من ============ -->
+<div id="ordersPage" class="sub-page">
+    <header class="sub-page-header">
+        <button class="back-btn" onclick="closePage('ordersPage')">→</button>
+        <h2>سفارشات من</h2>
+        <div></div>
+    </header>
+    <div class="sub-page-body">
+        <div class="page-icon-circle">📦</div>
+        <h3 class="page-title">تاریخچه سفارشات</h3>
+        <p class="page-sub">آخرین سفارش‌های شما اینجا نمایش داده می‌شوند</p>
+        <div id="ordersList">
+            <div class="empty-state">
+                <span class="empty-icon">📭</span>
+                <p>هنوز سفارشی ثبت نکرده‌اید</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ صفحه علاقه‌مندی‌ها ============ -->
+<div id="favoritesPage" class="sub-page">
+    <header class="sub-page-header">
+        <button class="back-btn" onclick="closePage('favoritesPage')">→</button>
+        <h2>علاقه‌مندی‌ها</h2>
+        <div></div>
+    </header>
+    <div class="sub-page-body">
+        <div id="favoritesPageList"></div>
+    </div>
+</div>
+
+<!-- ============ صفحه تماس با ما ============ -->
+<div id="contactPage" class="sub-page">
+    <header class="sub-page-header">
+        <button class="back-btn" onclick="closePage('contactPage')">→</button>
+        <h2>تماس با ما</h2>
+        <div></div>
+    </header>
+    <div class="sub-page-body">
+        <div class="page-icon-circle">📞</div>
+        <h3 class="page-title">در خدمت شماییم</h3>
+        <p class="page-sub">هر سوال یا پیشنهادی داشتید، خوشحال می‌شویم بشنویم</p>
+
+        <div class="contact-cards">
+            <a href="tel:09155838707" class="contact-card">
+                <span class="contact-icon">📱</span>
+                <div class="contact-info">
+                    <span class="contact-title">تماس تلفنی</span>
+                    <span class="contact-value">۰۹۱۵۵۸۳۸۷۰۷</span>
+                </div>
+            </a>
+
+            <a href="https://wa.me/989155838707" target="_blank" class="contact-card">
+                <span class="contact-icon">💬</span>
+                <div class="contact-info">
+                    <span class="contact-title">واتساپ</span>
+                    <span class="contact-value">ارسال پیام</span>
+                </div>
+            </a>
+
+            <div class="contact-card" onclick="openInstagram()">
+                <span class="contact-icon">📷</span>
+                <div class="contact-info">
+                    <span class="contact-title">اینستاگرام</span>
+                    <span class="contact-value">@Hoor_collectioon</span>
+                </div>
+            </div>
+
+            <div class="contact-card no-click">
+                <span class="contact-icon">📍</span>
+                <div class="contact-info">
+                    <span class="contact-title">آدرس فروشگاه</span>
+                    <span class="contact-value">درگز - جانبازان ۴ نبش کوچه آرامش</span>
+                </div>
+            </div>
+
+            <div class="contact-card no-click">
+                <span class="contact-icon">🕒</span>
+                <div class="contact-info">
+                    <span class="contact-title">ساعت پاسخگویی</span>
+                    <span class="contact-value">۹ صبح تا ۹ شب</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ صفحه درباره حور ============ -->
+<div id="aboutPage" class="sub-page">
+    <header class="sub-page-header">
+        <button class="back-btn" onclick="closePage('aboutPage')">→</button>
+        <h2>درباره حور</h2>
+        <div></div>
+    </header>
+    <div class="sub-page-body">
+        <div class="about-hero">
+            <img src="logo.jpg" alt="حور" onerror="this.style.display='none'">
+        </div>
+        <h3 class="page-title">داستان ما</h3>
+        <p class="about-text">
+            حور کالکشن، از دل یک رویای کوچک متولد شد؛ رویایی برای اینکه هر بانویی بتواند زیبایی و لطافت را در زندگی روزمره‌اش احساس کند.
+        </p>
+        <p class="about-text">
+            ما با انتخاب دقیق جنس‌ها، طراحی‌های مدرن و رنگ‌های آرام، تلاش می‌کنیم لباس‌هایی بسازیم که هم راحت باشند و هم حس خوبی به شما منتقل کنند.
+        </p>
+        <div class="about-values">
+            <div class="value-item">
+                <span class="value-icon">✨</span>
+                <span class="value-title">کیفیت بالا</span>
+            </div>
+            <div class="value-item">
+                <span class="value-icon">🌸</span>
+                <span class="value-title">طراحی خاص</span>
+            </div>
+            <div class="value-item">
+                <span class="value-icon">🚚</span>
+                <span class="value-title">ارسال سریع</span>
+            </div>
+            <div class="value-item">
+                <span class="value-icon">❤️</span>
+                <span class="value-title">رضایت شما</span>
+            </div>
+        </div>
+        <div class="designer-sign">
+            طراحی و توسعه توسط <span onclick="openPortfolio()">Mbin.Tech</span>
+        </div>
+    </div>
+</div>
+<!-- ============ صفحه جزئیات محصول ============ -->
+<div id="productPage" class="sub-page">
+    <header class="sub-page-header">
+        <button class="back-btn" onclick="closePage('productPage')">→</button>
+        <h2 id="productPageTitle">جزئیات محصول</h2>
+        <div style="width:40px;"></div>
+    </header>
+    <div id="productPageBody"></div>
+</div>
+</body>
+</html>
