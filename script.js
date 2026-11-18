@@ -652,7 +652,7 @@ function logoutUser() {
     checkUserLogin();
 }
 
-// ===== CHECKOUT (اتصال به سرور از طریق تونل امن) =====
+// ===== CHECKOUT (اتصال به سرور از طریق تونل امن جدید) =====
 async function checkout() {
     if (cart.length === 0) {
         showToast('سبد خرید خالی است');
@@ -675,8 +675,8 @@ async function checkout() {
     try {
         showToast('در حال اتصال به درگاه...');
         
-        // ⚠️ لینک امن Cloudflare Tunnel
-        const response = await fetch('https://ppp-asus-matrix-suspended.trycloudflare.com/api/payment/zarinpal', {
+        // ⚠️ لینک امن جدید Cloudflare Tunnel
+        const response = await fetch('https://minneapolis-deluxe-checkout-unv.trycloudflare.com/api/payment/zarinpal', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
