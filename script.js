@@ -671,13 +671,53 @@ function logoutUser() {
     checkUserLogin();
 }
 
-// ===== CHECKOUT =====
-function checkout() {
+// ===== CHECKOUT (اتصال به بک‌اند) =====
+async function checkout() {
     if (cart.length === 0) {
         showToast('سبد خرید خالی است');
         return;
     }
-    showToast('درگاه پرداخت به زودی اضافه می‌شود');
+    
+    var user = JSON.parse(localStorage.getItem('hoor_user')) || null;
+    if (!user) {
+        showToast('اول وارد حساب کاربری شوید');
+        closeModal('cartModal');
+        openPage('userPage');
+        return;
+    }
+
+    var address = prompt('آدرس تحویل را وارد کنید:');
+    if (!address) return;
+
+    var total = cart.reduce(function(s, i) { return s + (i.price * i.qty); }, 0);
+
+    try {
+        showToast('در حال اتصال به درگاه...');
+        
+        const response = await fetch('http://37.32.14.192:3000/api/payment/zarinpal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                amount: total,
+                order_id: Date.now().toString(),
+                customer_name: user.name,
+                phone: user.phone,
+                address: address,
+                items: cart
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.payment_url) {
+            window.location.href = data.payment_url;
+        } else {
+            showToast('خطا در ایجاد پرداخت');
+        }
+    } catch (error) {
+        console.error(error);
+        showToast('خطا در ارتباط با سرور');
+    }
 }
 
 // ===== INIT =====
