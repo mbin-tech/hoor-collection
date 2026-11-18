@@ -1,3 +1,4 @@
+
 /* eslint-disable */
 // @ts-nocheck
 
@@ -652,7 +653,7 @@ function logoutUser() {
     checkUserLogin();
 }
 
-// ===== CHECKOUT (اتصال مستقیم به سرور) =====
+// ===== CHECKOUT (اتصال به سرور از طریق تونل امن) =====
 async function checkout() {
     if (cart.length === 0) {
         showToast('سبد خرید خالی است');
@@ -675,8 +676,8 @@ async function checkout() {
     try {
         showToast('در حال اتصال به درگاه...');
         
-        // آدرس مستقیم تونل
-        const response = await fetch('https://offering-toolbox-held-don.trycloudflare.com/api/payment/zarinpal', {
+        // ⚠️ لینک امن جدید تونل
+        const response = await fetch('https://trends-powers-medications-lending.trycloudflare.com/api/payment/zarinpal', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
