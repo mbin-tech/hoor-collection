@@ -193,7 +193,6 @@ var tempCategories = [
 ];
 
 var tempProducts = [
-    // ===== هودی و کت =====
     { 
         id: 1, 
         name: 'کت آهویی', 
@@ -222,8 +221,6 @@ var tempProducts = [
         sizes: [],
         description: 'قد ۶۰ - فری سایز تا ۴۴'
     },
-
-    // ===== بلوز =====
     { 
         id: 3, 
         name: 'بافت', 
@@ -238,8 +235,6 @@ var tempProducts = [
         sizes: ['فری سایز'],
         description: 'قد ۵۶ - فری سایز ۳۴ تا ۴۴'
     },
-
-    // ===== دورس =====
     { 
         id: 4, 
         name: 'دورس', 
@@ -254,8 +249,6 @@ var tempProducts = [
         sizes: [],
         description: ''
     },
-
-    // ===== اکسسوری =====
     { 
         id: 5, 
         name: 'تل پرادا', 
@@ -535,7 +528,6 @@ function openProduct(id) {
 
     var html = '';
 
-    // ---- گالری ----
     if (imgs.length > 0) {
         html += '<div class="pd-gallery">';
         html += '<div class="pd-main-img"><img id="pdMainImg" src="'+imgs[0]+'" alt="'+p.name+'" onerror="this.parentElement.innerHTML=\'👗\'">';
@@ -552,12 +544,10 @@ function openProduct(id) {
         html += '<div class="pd-main-img" style="font-size:90px;">👗</div>';
     }
 
-    // ---- اطلاعات اصلی ----
     html += '<div class="pd-info">';
     html += '<h1 class="pd-name">'+p.name+'</h1>';
     html += '<div class="pd-cat">'+p.category+'</div>';
 
-    // ---- قیمت ----
     var priceHtml = '<span class="pd-price-now">'+p.price.toLocaleString()+' تومان</span>';
     if (p.old_price) {
         var off = Math.round((1 - p.price / p.old_price) * 100);
@@ -565,7 +555,6 @@ function openProduct(id) {
     }
     html += '<div class="pd-price-row">'+priceHtml+'</div>';
 
-    // ---- رنگ ----
     if (p.colors && p.colors.length && p.colors[0] !== '-') {
         html += '<div class="pd-option"><div class="pd-option-label">رنگ</div><div class="pd-chips">';
         p.colors.forEach(function(c, i){
@@ -574,7 +563,6 @@ function openProduct(id) {
         html += '</div></div>';
     }
 
-    // ---- سایز ----
     if (p.sizes && p.sizes.length) {
         html += '<div class="pd-option"><div class="pd-option-label">سایز</div><div class="pd-chips">';
         p.sizes.forEach(function(s, i){
@@ -583,17 +571,13 @@ function openProduct(id) {
         html += '</div></div>';
     }
 
-    // ---- توضیحات ----
     if (p.description) {
         html += '<div class="pd-desc">'+p.description+'</div>';
     }
 
-    // ---- موجودی ----
     html += '<div class="pd-stock">' + (p.stock > 0 ? 'موجودی: '+p.stock+' عدد' : 'ناموجود') + '</div>';
+    html += '</div>';
 
-    html += '</div>'; // end pd-info
-
-    // ---- نوار پایین ----
     html += '<div class="pd-bottom-bar">';
     if (p.stock > 0) {
         html += '<button class="pd-buy-btn" onclick="pdAddAndBack('+p.id+')">افزودن به سبد خرید</button>';
@@ -607,20 +591,17 @@ function openProduct(id) {
     openPage('productPage');
 }
 
-// تعویض عکس گالری
 function pdSwitchImg(el, src) {
     document.getElementById('pdMainImg').src = src;
     document.querySelectorAll('.pd-thumbs img').forEach(function(i){ i.classList.remove('active'); });
     el.classList.add('active');
 }
 
-// انتخاب چیپ رنگ/سایز
 function pdSelectChip(el) {
     el.parentElement.querySelectorAll('.pd-chip').forEach(function(c){ c.classList.remove('active'); });
     el.classList.add('active');
 }
 
-// افزودن به سبد از صفحه محصول
 function pdAddAndBack(id) {
     addToCart(id);
 }
@@ -671,7 +652,7 @@ function logoutUser() {
     checkUserLogin();
 }
 
-// ===== CHECKOUT (اتصال به وب‌هوک برای تست) =====
+// ===== CHECKOUT (اتصال به سرور از طریق تونل امن) =====
 async function checkout() {
     if (cart.length === 0) {
         showToast('سبد خرید خالی است');
@@ -692,10 +673,10 @@ async function checkout() {
     var total = cart.reduce(function(s, i) { return s + (i.price * i.qty); }, 0);
 
     try {
-        showToast('در حال اتصال...');
+        showToast('در حال اتصال به درگاه...');
         
-        // ⚠️ اینجا آدرس وب‌هوک تستی رو جایگزین کردم
-        const response = await fetch('https://webhook.site/c45b5dbf-d86b-4c91-94ba-ad61abf424fa', {
+        // ⚠️ لینک امن Cloudflare Tunnel
+        const response = await fetch('https://ppp-asus-matrix-suspended.trycloudflare.com/api/payment/zarinpal', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -708,13 +689,16 @@ async function checkout() {
             })
         });
 
-        // چون وب‌هوک جواب json نمیده، فقط پیام موفقیت نشون میدیم
-        showToast('✅ اتصال با موفقیت انجام شد (تست)');
-        closeModal('cartModal');
+        const data = await response.json();
         
+        if (data.payment_url) {
+            window.location.href = data.payment_url;
+        } else {
+            showToast('خطا در ایجاد پرداخت');
+        }
     } catch (error) {
         console.error(error);
-        showToast('خطا در ارتباط');
+        showToast('خطا در ارتباط با سرور');
     }
 }
 
