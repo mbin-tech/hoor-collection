@@ -652,7 +652,7 @@ function logoutUser() {
     checkUserLogin();
 }
 
-// ===== CHECKOUT (اتصال به سرور از طریق تونل امن جدید + عبور از CORS) =====
+// ===== CHECKOUT (اتصال مستقیم به سرور) =====
 async function checkout() {
     if (cart.length === 0) {
         showToast('سبد خرید خالی است');
@@ -675,8 +675,8 @@ async function checkout() {
     try {
         showToast('در حال اتصال به درگاه...');
         
-        // ⚠️ استفاده از allorigins برای دور زدن خطای CORS
-        const response = await fetch('https://api.allorigins.win/raw?url=https://offering-toolbox-held-don.trycloudflare.com/api/payment/zarinpal', {
+        // آدرس مستقیم تونل
+        const response = await fetch('https://offering-toolbox-held-don.trycloudflare.com/api/payment/zarinpal', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
