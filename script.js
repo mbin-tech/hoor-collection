@@ -675,8 +675,8 @@ async function checkout() {
     try {
         showToast('در حال اتصال به درگاه...');
         
-        // ⚠️ لینک امن جدید Cloudflare Tunnel (بدون واسطه allorigins برای پرداخت اصلی)
-        const response = await fetch('https://minneapolis-deluxe-checkout-unv.trycloudflare.com/api/payment/zarinpal', {
+        // ⚠️ لینک امن جدید Cloudflare Tunnel
+        const response = await fetch('https://offering-toolbox-held-don.trycloudflare.com/api/payment/zarinpal', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
