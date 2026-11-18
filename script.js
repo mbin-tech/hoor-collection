@@ -671,7 +671,7 @@ function logoutUser() {
     checkUserLogin();
 }
 
-// ===== CHECKOUT (اتصال به بک‌اند) =====
+// ===== CHECKOUT (اتصال به وب‌هوک برای تست) =====
 async function checkout() {
     if (cart.length === 0) {
         showToast('سبد خرید خالی است');
@@ -692,9 +692,10 @@ async function checkout() {
     var total = cart.reduce(function(s, i) { return s + (i.price * i.qty); }, 0);
 
     try {
-        showToast('در حال اتصال به درگاه...');
+        showToast('در حال اتصال...');
         
-        const response = await fetch('http://37.32.14.192:3000/api/payment/zarinpal', {
+        // ⚠️ اینجا آدرس وب‌هوک تستی رو جایگزین کردم
+        const response = await fetch('https://webhook.site/c45b5dbf-d86b-4c91-94ba-ad61abf424fa', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -707,16 +708,13 @@ async function checkout() {
             })
         });
 
-        const data = await response.json();
+        // چون وب‌هوک جواب json نمیده، فقط پیام موفقیت نشون میدیم
+        showToast('✅ اتصال با موفقیت انجام شد (تست)');
+        closeModal('cartModal');
         
-        if (data.payment_url) {
-            window.location.href = data.payment_url;
-        } else {
-            showToast('خطا در ایجاد پرداخت');
-        }
     } catch (error) {
         console.error(error);
-        showToast('خطا در ارتباط با سرور');
+        showToast('خطا در ارتباط');
     }
 }
 
