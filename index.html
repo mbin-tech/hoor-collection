@@ -425,5 +425,34 @@
     </header>
     <div id="productPageBody"></div>
 </div>
+    <!-- ===== مودال انتخاب درگاه پرداخت ===== -->
+<div id="paymentGatewayModal" class="modal">
+    <div class="modal-box" style="text-align:center;">
+        <button class="modal-close" onclick="closeModal('paymentGatewayModal')">✕</button>
+        <h2 style="margin-bottom: 20px;">روش پرداخت را انتخاب کنید</h2>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- دکمه زرین‌پال -->
+            <button onclick="payWithZarinpal()" style="padding: 15px; border-radius: 12px; background: #F5D5E0; color: #3D2C38; font-weight: 700; border: 1px solid #D48CA0; cursor: pointer;">
+                💳 پرداخت آنلاین (زرین‌پال)
+            </button>
+            
+            <!-- دکمه ترب پی -->
+            <button onclick="payWithTorobPay()" style="padding: 15px; border-radius: 12px; background: #FBF3D4; color: #3D2C38; font-weight: 700; border: 1px solid #F0D68C; cursor: pointer;">
+                💰 پرداخت اقساطی (ترب پی)
+            </button>
+
+            <!-- دکمه اسنپ پی -->
+            <button onclick="showToast('به زودی...')" style="padding: 15px; border-radius: 12px; background: #f0f0f0; color: #888; font-weight: 700; border: 1px solid #ccc; cursor: pointer;">
+                🚀 پرداخت با اسنپ پی (به زودی)
+            </button>
+
+            <!-- دکمه دیجی پی -->
+            <button onclick="showToast('به زودی...')" style="padding: 15px; border-radius: 12px; background: #f0f0f0; color: #888; font-weight: 700; border: 1px solid #ccc; cursor: pointer;">
+                💎 پرداخت با دیجی پی (به زودی)
+            </button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
