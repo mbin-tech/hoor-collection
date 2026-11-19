@@ -652,8 +652,8 @@ function logoutUser() {
     checkUserLogin();
 }
 
-// ===== CHECKOUT (اتصال مستقیم به سرور) =====
-async function checkout() {
+// ===== CHECKOUT =====
+function checkout() {
     if (cart.length === 0) {
         showToast('سبد خرید خالی است');
         return;
@@ -670,36 +670,27 @@ async function checkout() {
     var address = prompt('آدرس تحویل را وارد کنید:');
     if (!address) return;
 
-    var total = cart.reduce(function(s, i) { return s + (i.price * i.qty); }, 0);
+    // ذخیره آدرس موقت
+    localStorage.setItem('hoor_temp_address', address);
+    
+    // بستن سبد و باز کردن مودال درگاه‌ها
+    closeModal('cartModal');
+    openModal('paymentGatewayModal');
+}
 
-    try {
-        showToast('در حال اتصال به درگاه...');
-        
-        // ⚠️ آدرس مستقیم سرور آروان (بدون تونل)
-        const response = await fetch('http://37.32.14.192/api/payment/zarinpal', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                amount: total,
-                order_id: Date.now().toString(),
-                customer_name: user.name,
-                phone: user.phone,
-                address: address,
-                items: cart
-            })
-        });
+// ===== پرداخت با زرین‌پال =====
+function payWithZarinpal() {
+    showToast('درگاه زرین‌پال در حال راه‌اندازی است...');
+    setTimeout(() => closeModal('paymentGatewayModal'), 2000);
+}
 
-        const data = await response.json();
-        
-        if (data.payment_url) {
-            window.location.href = data.payment_url;
-        } else {
-            showToast('خطا در ایجاد پرداخت');
-        }
-    } catch (error) {
-        console.error(error);
-        showToast('خطا در ارتباط با سرور');
-    }
+// ===== پرداخت با ترب پی =====
+function payWithTorobPay() {
+    var torobLink = 'https://torobpay.com/pay/00287566';
+    showToast('در حال انتقال به ترب پی...');
+    setTimeout(function() {
+        window.location.href = torobLink;
+    }, 1000);
 }
 
 // ===== INIT =====
