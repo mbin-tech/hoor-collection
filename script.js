@@ -262,10 +262,31 @@ function checkout() {
     if (cart.length === 0) { showToast('سبد خرید خالی است'); return; }
     var user = JSON.parse(localStorage.getItem('hoor_user')) || null;
     if (!user) { showToast('اول وارد حساب کاربری شوید'); closeModal('cartModal'); openPage('userPage'); return; }
-    closeModal('cartModal'); openModal('checkoutInfoModal');
+    
+    // بستن سبد خرید و باز کردن مودال اطلاعات
+    closeModal('cartModal'); 
+    openModal('checkoutInfoModal');
+    
+    // پر کردن خودکار نام و شماره کاربر
     document.getElementById('checkoutName').value = user.name || '';
     document.getElementById('checkoutPhone').value = user.phone || '';
-    document.getElementById('checkoutAddress').value = '';
+    document.getElementById('checkoutAddress').value = ''; 
+}
+
+// ===== تایید اطلاعات و رفتن به درگاه =====
+function confirmCheckoutInfo() {
+    var name = document.getElementById('checkoutName').value.trim();
+    var phone = document.getElementById('checkoutPhone').value.trim();
+    var address = document.getElementById('checkoutAddress').value.trim();
+
+    if (!name || !phone || !address) { 
+        showToast('لطفاً همه اطلاعات را کامل کنید'); 
+        return; 
+    }
+
+    // بستن مودال اطلاعات و باز کردن مودال انتخاب درگاه
+    closeModal('checkoutInfoModal'); 
+    openModal('paymentGatewayModal');
 }
 
 function confirmCheckoutInfo() {
