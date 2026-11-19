@@ -263,74 +263,28 @@ function checkout() {
     var user = JSON.parse(localStorage.getItem('hoor_user')) || null;
     if (!user) { showToast('اول وارد حساب کاربری شوید'); closeModal('cartModal'); openPage('userPage'); return; }
     
-    // بستن سبد خرید و رفتن به صفحه تکمیل سفارش
     closeModal('cartModal'); 
-    openPage('checkoutPage');
     
-    // پر کردن خودکار نام و شماره کاربر
-    document.getElementById('checkoutName').value = user.name || '';
-    document.getElementById('checkoutPhone').value = user.phone || '';
-    document.getElementById('checkoutAddress').value = ''; 
+    var nameInput = document.getElementById('checkoutName');
+    var phoneInput = document.getElementById('checkoutPhone');
+    var addressInput = document.getElementById('checkoutAddress');
+    
+    if(nameInput) nameInput.value = user.name || '';
+    if(phoneInput) phoneInput.value = user.phone || '';
+    if(addressInput) addressInput.value = ''; 
+    
+    openPage('checkoutPage');
 }
 
-// ===== ثبت نهایی و پرداخت =====
-function confirmAndPay() {
-    var name = document.getElementById('checkoutName').value.trim();
-    var phone = document.getElementById('checkoutPhone').value.trim();
-    var address = document.getElementById('checkoutAddress').value.trim();
-
-    if (!name || !phone || !address) { 
-        showToast('لطفاً همه اطلاعات را کامل کنید'); 
-        return; 
-    }
-
-    showToast('اطلاعات ثبت شد. لطفاً روش پرداخت را انتخاب کنید.');
-    // فعلاً منتظر می‌مونیم کاربر یکی از دکمه‌های پرداخت رو بزنه
-}
-
-// ===== درگاه‌ها =====
-function payWithZarinpal() {
-    showToast('درگاه زرین‌پال در حال راه‌اندازی است...');
-}
 function payWithTorobPay() {
-    var torobLink = 'https://torobpay.com/pay/00287566';
-    showToast('در حال انتقال به ترب پی...');
-    setTimeout(function() { window.location.href = torobLink; }, 1000);
-}
-
-// ===== تایید اطلاعات و رفتن به درگاه =====
-function confirmCheckoutInfo() {
     var name = document.getElementById('checkoutName').value.trim();
     var phone = document.getElementById('checkoutPhone').value.trim();
     var address = document.getElementById('checkoutAddress').value.trim();
 
-    if (!name || !phone || !address) { 
-        showToast('لطفاً همه اطلاعات را کامل کنید'); 
-        return; 
-    }
+    if (!name || !phone || !address) { showToast('لطفاً ابتدا اطلاعات تحویل را کامل کنید'); return; }
 
-    // بستن مودال اطلاعات و باز کردن مودال انتخاب درگاه
-    closeModal('checkoutInfoModal'); 
-    openModal('paymentGatewayModal');
-}
-
-function confirmCheckoutInfo() {
-    var name = document.getElementById('checkoutName').value.trim();
-    var phone = document.getElementById('checkoutPhone').value.trim();
-    var address = document.getElementById('checkoutAddress').value.trim();
-    if (!name || !phone || !address) { showToast('لطفاً همه اطلاعات را کامل کنید'); return; }
-    closeModal('checkoutInfoModal'); openModal('paymentGatewayModal');
-}
-
-// ===== درگاه‌ها =====
-function payWithZarinpal() {
-    closeModal('paymentGatewayModal');
-    showToast('درگاه زرین‌پال در حال راه‌اندازی است...');
-}
-function payWithTorobPay() {
-    closeModal('paymentGatewayModal');
     var torobLink = 'https://torobpay.com/pay/00287566';
-    showToast('در حال انتقال به ترب پی...');
+    showToast('در حال انتقال به درگاه ترب پی...');
     setTimeout(function() { window.location.href = torobLink; }, 1000);
 }
 
