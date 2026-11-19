@@ -454,5 +454,16 @@
         </div>
     </div>
 </div>
+    <!-- ===== مودال اطلاعات تحویل ===== -->
+<div id="checkoutInfoModal" class="modal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('checkoutInfoModal')">✕</button>
+        <h2>اطلاعات تحویل</h2>
+        <input type="text" id="checkoutName" placeholder="نام و نام خانوادگی" style="margin-bottom: 10px;">
+        <input type="text" id="checkoutPhone" placeholder="شماره موبایل" style="margin-bottom: 10px;">
+        <input type="text" id="checkoutAddress" placeholder="آدرس کامل پستی" style="margin-bottom: 10px;">
+        <button onclick="confirmCheckoutInfo()" style="width: 100%; padding: 15px; background: #B56B82; color: white; border-radius: 10px; border: none; font-weight: bold;">تایید و ادامه</button>
+    </div>
+</div>
 </body>
 </html>
