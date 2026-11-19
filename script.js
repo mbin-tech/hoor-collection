@@ -1,6 +1,9 @@
 /* eslint-disable */
 // @ts-nocheck
 
+// ===== SUPABASE CONFIG =====
+// (db از supabase-config.js میاد)
+
 // ===== SLIDER =====
 var currentSlide = 0;
 var sliderWrapper = document.getElementById('sliderWrapper');
@@ -80,7 +83,7 @@ function renderAllProducts(filter) {
 // ===== TOAST =====
 function showToast(msg) { var t = document.getElementById('toast'); if (!t) return; t.textContent = msg; t.classList.add('show'); setTimeout(function() { t.classList.remove('show'); }, 2500); }
 
-// ===== TEMP DATA =====
+// ===== TEMP DATA (دسته‌بندی‌ها) =====
 var tempCategories = [
     { id: 1, name: 'شلوار و دامن', icon: 'cat-shlvar.png' },
     { id: 2, name: 'شال و روسری', icon: 'cat-shal.png' },
@@ -90,13 +93,36 @@ var tempCategories = [
     { id: 6, name: 'بلوز', icon: 'cat-bloooz.png' }
 ];
 
-var tempProducts = [
-    { id: 1, name: 'کت آهویی', category: 'هودی و کت', price: 4980000, old_price: null, img: 'kat-ahooi-1.jpg', images: ['kat-ahooi-1.jpg'], stock: 3, featured: true, colors: ['تک رنگ'], sizes: [], description: 'فری سایز تا ۴۴' },
-    { id: 2, name: 'کت کابوی', category: 'هودی و کت', price: 5100000, old_price: null, img: 'kat-cowboy-1.jpg', images: ['kat-cowboy-1.jpg'], stock: 3, featured: true, colors: ['-'], sizes: [], description: 'قد ۶۰ - فری سایز تا ۴۴' },
-    { id: 3, name: 'بافت', category: 'بلوز', price: 3980000, old_price: null, img: 'bafte-1.jpg', images: ['bafte-1.jpg', 'bafte-2.jpg', 'bafte-3.jpg', 'bafte-4.jpg', 'bafte-5.jpg'], stock: 1, featured: true, colors: ['سفید', 'آبی', 'مشکی'], sizes: ['فری سایز'], description: 'قد ۵۶ - فری سایز ۳۴ تا ۴۴' },
-    { id: 4, name: 'دورس', category: 'دورس', price: 3980000, old_price: null, img: 'doores-1.jpg', images: ['doores-1.jpg','doores-2.jpg', 'doores-3.jpg', 'doores-4.jpg', 'doores-5.jpg'], stock: 1, featured: true, colors: ['سفید', 'مشکی'], sizes: [], description: '' },
-    { id: 5, name: 'تل پرادا', category: 'اکسسوری', price: 480000, old_price: null, img: 'telle-parada-1.jpg', images: ['telle-parada-1.jpg'], stock: 11, featured: true, colors: ['مشکی', 'قهوه‌ای', 'قرمز'], sizes: [], description: 'تزئین مو' }
-];
+// ===== PRODUCTS (از دیتابیس) =====
+var tempProducts = [];
+
+async function loadProductsFromSupabase() {
+    try {
+        const { data, error } = await db.from('products').select('*').eq('active', true).order('created_at', { ascending: false });
+        if (error) throw error;
+        
+        tempProducts = data.map(p => ({
+            id: p.id,
+            name: p.name,
+            category: p.category || 'سایر',
+            price: p.price,
+            old_price: p.old_price,
+            img: p.image,
+            stock: p.stock,
+            description: p.description || '',
+            images: [p.image] // فعلاً یک عکس
+        }));
+        
+        renderCategories();
+        renderFeaturedProducts();
+        if (document.getElementById('allProductsPage').classList.contains('show')) {
+            renderAllProducts(currentFilter);
+        }
+    } catch (e) {
+        console.error('Error loading products:', e);
+        showToast('خطا در بارگذاری محصولات');
+    }
+}
 
 // ===== RENDER CATEGORIES =====
 function renderCategories() {
@@ -116,10 +142,16 @@ function renderCategories() {
 
 // ===== CREATE PRODUCT CARD =====
 function createProductCard(p) {
-    var badge = ''; if (p.stock === 0) { badge = '<span class="product-badge sold-out">ناموجود</span>'; } else if (p.old_price) { badge = '<span class="product-badge">تخفیف</span>'; }
-    var priceHtml = p.price.toLocaleString() + ' تومان'; if (p.old_price) { priceHtml = p.price.toLocaleString() + ' <span class="old">' + p.old_price.toLocaleString() + '</span>'; }
+    var badge = ''; 
+    if (p.stock === 0) { badge = '<span class="product-badge sold-out">ناموجود</span>'; } 
+    else if (p.old_price) { badge = '<span class="product-badge">تخفیف</span>'; }
+    
+    var priceHtml = p.price.toLocaleString() + ' تومان'; 
+    if (p.old_price) { priceHtml = p.price.toLocaleString() + ' <span class="old">' + p.old_price.toLocaleString() + '</span>'; }
+    
     var btnHtml = p.stock > 0 ? '<button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(' + p.id + ')">افزودن به سبد</button>' : '<button class="add-to-cart-btn" disabled>ناموجود</button>';
     var isFav = favorites.indexOf(p.id) !== -1;
+    
     var html = '<div class="product-card" onclick="openProduct(' + p.id + ')">';
     html += '<div class="product-img">';
     html += '<button class="fav-btn ' + (isFav ? 'active' : '') + '" onclick="event.stopPropagation(); toggleFavorite(' + p.id + ')">' + (isFav ? '♥' : '♡') + '</button>';
@@ -133,7 +165,7 @@ function createProductCard(p) {
 function renderFeaturedProducts() {
     var grid = document.getElementById('featuredGrid');
     if (!grid) return;
-    var featured = tempProducts.filter(function(p) { return p.featured || p.old_price; }).slice(0, 4);
+    var featured = tempProducts.slice(0, 4);
     var html = ''; featured.forEach(function(p) { html += createProductCard(p); }); grid.innerHTML = html;
 }
 
@@ -264,31 +296,63 @@ function checkout() {
     if (!user) { showToast('اول وارد حساب کاربری شوید'); closeModal('cartModal'); openPage('userPage'); return; }
     
     closeModal('cartModal'); 
-    
     var nameInput = document.getElementById('checkoutName');
     var phoneInput = document.getElementById('checkoutPhone');
     var addressInput = document.getElementById('checkoutAddress');
-    
     if(nameInput) nameInput.value = user.name || '';
     if(phoneInput) phoneInput.value = user.phone || '';
     if(addressInput) addressInput.value = ''; 
-    
     openPage('checkoutPage');
 }
 
-function payWithTorobPay() {
+// ===== درگاه‌ها =====
+async function payWithTorobPay() {
     var name = document.getElementById('checkoutName').value.trim();
     var phone = document.getElementById('checkoutPhone').value.trim();
     var address = document.getElementById('checkoutAddress').value.trim();
 
-    if (!name || !phone || !address) { showToast('لطفاً ابتدا اطلاعات تحویل را کامل کنید'); return; }
+    if (!name || !phone || !address) { showToast('لطفاً همه اطلاعات را کامل کنید'); return; }
 
-    var torobLink = 'https://torobpay.com/pay/00287566';
-    showToast('در حال انتقال به درگاه ترب پی...');
-    setTimeout(function() { window.location.href = torobLink; }, 1000);
+    var total = cart.reduce(function(s, i) { return s + (i.price * i.qty); }, 0);
+
+    try {
+        showToast('در حال ثبت سفارش...');
+        
+        // ذخیره سفارش تو دیتابیس
+        const { data, error } = await db.from('orders').insert([{
+            customer_name: name,
+            phone: phone,
+            address: address,
+            items: cart,
+            total: total,
+            status: 'pending',
+            payment_method: 'torobpay'
+        }]).select();
+
+        if (error) throw error;
+        
+        // پاک کردن سبد
+        cart = [];
+        saveCart();
+        updateCartBar();
+
+        showToast('سفارش ثبت شد. انتقال به درگاه...');
+        var torobLink = 'https://torobpay.com/pay/00287566';
+        setTimeout(function() { window.location.href = torobLink; }, 1500);
+
+    } catch (error) {
+        console.error(error);
+        showToast('خطا در ثبت سفارش');
+    }
+}
+
+function payWithZarinpal() {
+    showToast('درگاه زرین‌پال در حال راه‌اندازی است...');
 }
 
 // ===== INIT =====
 window.addEventListener('DOMContentLoaded', function() {
-    renderCategories(); renderFeaturedProducts(); updateCartBar(); checkUserLogin();
+    loadProductsFromSupabase();
+    updateCartBar();
+    checkUserLogin();
 });
