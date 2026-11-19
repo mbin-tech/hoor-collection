@@ -263,14 +263,39 @@ function checkout() {
     var user = JSON.parse(localStorage.getItem('hoor_user')) || null;
     if (!user) { showToast('اول وارد حساب کاربری شوید'); closeModal('cartModal'); openPage('userPage'); return; }
     
-    // بستن سبد خرید و باز کردن مودال اطلاعات
+    // بستن سبد خرید و رفتن به صفحه تکمیل سفارش
     closeModal('cartModal'); 
-    openModal('checkoutInfoModal');
+    openPage('checkoutPage');
     
     // پر کردن خودکار نام و شماره کاربر
     document.getElementById('checkoutName').value = user.name || '';
     document.getElementById('checkoutPhone').value = user.phone || '';
     document.getElementById('checkoutAddress').value = ''; 
+}
+
+// ===== ثبت نهایی و پرداخت =====
+function confirmAndPay() {
+    var name = document.getElementById('checkoutName').value.trim();
+    var phone = document.getElementById('checkoutPhone').value.trim();
+    var address = document.getElementById('checkoutAddress').value.trim();
+
+    if (!name || !phone || !address) { 
+        showToast('لطفاً همه اطلاعات را کامل کنید'); 
+        return; 
+    }
+
+    showToast('اطلاعات ثبت شد. لطفاً روش پرداخت را انتخاب کنید.');
+    // فعلاً منتظر می‌مونیم کاربر یکی از دکمه‌های پرداخت رو بزنه
+}
+
+// ===== درگاه‌ها =====
+function payWithZarinpal() {
+    showToast('درگاه زرین‌پال در حال راه‌اندازی است...');
+}
+function payWithTorobPay() {
+    var torobLink = 'https://torobpay.com/pay/00287566';
+    showToast('در حال انتقال به ترب پی...');
+    setTimeout(function() { window.location.href = torobLink; }, 1000);
 }
 
 // ===== تایید اطلاعات و رفتن به درگاه =====
