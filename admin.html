@@ -19,14 +19,10 @@ body {
 h1 { color: #B56B82; text-align: center; font-size: 22px; margin-bottom: 5px; }
 .subtitle { text-align: center; color: #A09098; font-size: 13px; margin-bottom: 20px; }
 
-/* Login */
 #loginScreen {
-    max-width: 380px;
-    margin: 60px auto;
-    background: #fff;
-    border: 1px solid #F5D5E0;
-    border-radius: 24px;
-    padding: 35px 25px;
+    max-width: 380px; margin: 60px auto;
+    background: #fff; border: 1px solid #F5D5E0;
+    border-radius: 24px; padding: 35px 25px;
     box-shadow: 0 20px 60px rgba(181, 107, 130, 0.12);
 }
 #loginScreen h2 { color: #B56B82; text-align: center; margin-bottom: 20px; font-size: 22px; }
@@ -46,7 +42,6 @@ h1 { color: #B56B82; text-align: center; font-size: 22px; margin-bottom: 5px; }
 }
 #loginScreen .err { color: #e74c3c; font-size: 13px; text-align: center; margin-bottom: 10px; min-height: 20px; }
 
-/* Panel */
 #adminPanel { display: none; }
 .user-bar {
     background: #fff; border: 1px solid #F5D5E0;
@@ -60,6 +55,22 @@ h1 { color: #B56B82; text-align: center; font-size: 22px; margin-bottom: 5px; }
     border: 1px solid #E8A4A4; padding: 8px 16px;
     border-radius: 10px; font-size: 13px; cursor: pointer;
     font-family: inherit; font-weight: 600;
+}
+
+/* تب‌ها */
+.tabs {
+    display: flex; gap: 8px; margin-bottom: 15px;
+    border-bottom: 1px solid #F5D5E0; padding-bottom: 10px;
+    overflow-x: auto;
+}
+.tabs button {
+    background: transparent; border: none;
+    padding: 10px 16px; border-radius: 10px;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    color: #A09098; cursor: pointer; white-space: nowrap;
+}
+.tabs button.active {
+    background: #FBEDF2; color: #B56B82;
 }
 
 .add-btn {
@@ -160,18 +171,67 @@ h1 { color: #B56B82; text-align: center; font-size: 22px; margin-bottom: 5px; }
 <!-- Admin Panel -->
 <div id="adminPanel">
     <h1>⚙️ پنل مدیریت حور</h1>
-    <p class="subtitle">محصولات رو مدیریت کن</p>
+    <p class="subtitle">محصولات و تنظیمات سایت رو مدیریت کن</p>
 
     <div class="user-bar">
         <span class="email" id="userEmail">-</span>
         <button onclick="logout()">خروج</button>
     </div>
 
-    <button class="add-btn" onclick="addNewItem()">➕ افزودن محصول جدید</button>
-    <div id="itemsList"></div>
+    <!-- تب‌ها -->
+    <div class="tabs">
+        <button class="active" onclick="switchTab('products', this)">👕 محصولات</button>
+        <button onclick="switchTab('settings', this)">⚙️ تنظیمات سایت</button>
+    </div>
+
+    <!-- تب محصولات -->
+    <div id="tab-products">
+        <button class="add-btn" onclick="addNewItem()">➕ افزودن محصول جدید</button>
+        <div id="itemsList"></div>
+    </div>
+
+    <!-- تب تنظیمات سایت -->
+    <div id="tab-settings" style="display:none;">
+        <div class="item" style="background:#fff; padding: 20px; border-radius: 16px; border: 1px solid #F5D5E0;">
+            <div class="row">
+                <div class="field">
+                    <label>متن اصلی هدر (زیر لوگو)</label>
+                    <input type="text" id="set-hero-text">
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <label>زیرنویس هدر</label>
+                    <input type="text" id="set-hero-subtitle">
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <label>متن درباره ما</label>
+                    <textarea id="set-about-text" style="min-height: 100px;"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <label>شماره تماس</label>
+                    <input type="text" id="set-phone">
+                </div>
+                <div class="field">
+                    <label>آیدی اینستاگرام</label>
+                    <input type="text" id="set-instagram">
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <label>آدرس فروشگاه</label>
+                    <input type="text" id="set-address">
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="save-bar">
-        <button class="save" id="saveBtn" onclick="saveAllChanges()">💾 ذخیره تغییرات</button>
+        <button class="save" id="saveBtn" onclick="saveChanges()">💾 ذخیره تغییرات</button>
     </div>
 </div>
 
@@ -185,23 +245,22 @@ var allItems = [];
 var editedItems = {};
 var deletedItems = [];
 var newItems = [];
+var settings = {};
+var currentTab = 'products';
 
-// Init
 if (typeof window.supabase !== 'undefined') {
-    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
 checkAuth();
 
 async function checkAuth() {
-    if (!db) {
-        showStatus('خطا در اتصال به دیتابیس', 'error');
-        return;
-    }
+    if (!db) { showStatus('خطا در اتصال به دیتابیس', 'error'); return; }
     var session = await db.auth.getSession();
     if (session.data.session) {
         showAdminPanel();
         loadItems();
+        loadSettings();
     } else {
         showLoginScreen();
     }
@@ -221,27 +280,16 @@ async function login() {
     var email = document.getElementById('email').value.trim();
     var password = document.getElementById('password').value;
     var errEl = document.getElementById('loginError');
-
-    if (!email || !password) {
-        errEl.textContent = 'ایمیل و رمز را وارد کنید';
-        return;
-    }
-
+    if (!email || !password) { errEl.textContent = 'ایمیل و رمز را وارد کنید'; return; }
     errEl.textContent = '';
     showStatus('در حال ورود...', 'loading');
-
     var result = await db.auth.signInWithPassword({ email: email, password: password });
-
-    if (result.error) {
-        errEl.textContent = 'خطا: ' + result.error.message;
-        hideStatus();
-        return;
-    }
-
+    if (result.error) { errEl.textContent = 'خطا: ' + result.error.message; hideStatus(); return; }
     hideStatus();
     showAdminPanel();
     document.getElementById('userEmail').textContent = email;
     loadItems();
+    loadSettings();
 }
 
 async function logout() {
@@ -249,23 +297,25 @@ async function logout() {
     location.reload();
 }
 
+// ===== تب‌ها =====
+function switchTab(tabName, btn) {
+    currentTab = tabName;
+    document.querySelectorAll('.tabs button').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('tab-products').style.display = tabName === 'products' ? 'block' : 'none';
+    document.getElementById('tab-settings').style.display = tabName === 'settings' ? 'block' : 'none';
+}
+
+// ===== محصولات =====
 async function loadItems() {
     showStatus('در حال بارگذاری...', 'loading');
-
-    var result = await db.from('hoor_products').select('*').order('id', { ascending: true });
-
-    if (result.error) {
-        showStatus('خطا: ' + result.error.message, 'error');
-        return;
-    }
-
+    var result = await db.from('products').select('*').order('created_at', { ascending: false });
+    if (result.error) { showStatus('خطا: ' + result.error.message, 'error'); return; }
     allItems = result.data || [];
-
     var session = await db.auth.getSession();
     if (session.data.session) {
         document.getElementById('userEmail').textContent = session.data.session.user.email;
     }
-
     hideStatus();
     renderItems();
 }
@@ -274,14 +324,7 @@ function renderItems() {
     var container = document.getElementById('itemsList');
     var html = '';
     var count = 0;
-
-    // New items
-    for (var n = 0; n < newItems.length; n++) {
-        count++;
-        html += renderItemHtml('new-' + n, newItems[n]);
-    }
-
-    // Existing items
+    for (var n = 0; n < newItems.length; n++) { count++; html += renderItemHtml('new-' + n, newItems[n]); }
     for (var i = 0; i < allItems.length; i++) {
         var item = allItems[i];
         if (deletedItems.indexOf(item.id) !== -1) continue;
@@ -289,60 +332,34 @@ function renderItems() {
         var edited = editedItems[item.id] || item;
         html += renderItemHtml(item.id, edited);
     }
-
     if (count === 0) html = '<p class="empty">هنوز محصولی اضافه نشده</p>';
     container.innerHTML = html;
 }
 
 function renderItemHtml(id, item) {
     var imgPreview = '';
-    if (item.img && item.img.indexOf('http') === 0) {
-        imgPreview = '<img src="' + item.img + '" class="item-img-preview" onerror="this.style.display=\'none\'">';
+    if (item.image && item.image.indexOf('http') === 0) {
+        imgPreview = '<img src="' + item.image + '" class="item-img-preview" onerror="this.style.display=\'none\'">';
     }
-
     var colorsStr = (item.colors || []).join(', ');
-
     return '<div class="item">' +
-        '<div class="row">' +
-            '<div class="field"><label>نام محصول</label>' +
-            '<input type="text" value="' + (item.name || '') + '" onchange="updateField(\'' + id + '\', \'name\', this.value)"></div>' +
-        '</div>' +
-        '<div class="row">' +
-            '<div class="field"><label>قیمت (تومان)</label>' +
-            '<input type="number" value="' + (item.price || 0) + '" onchange="updateField(\'' + id + '\', \'price\', parseInt(this.value) || 0)"></div>' +
-            '<div class="field"><label>قیمت قدیم (اختیاری)</label>' +
-            '<input type="number" value="' + (item.old_price || '') + '" onchange="updateField(\'' + id + '\', \'old_price\', this.value ? parseInt(this.value) : null)"></div>' +
-        '</div>' +
-        '<div class="row">' +
-            '<div class="field"><label>دسته‌بندی</label>' +
-            '<select onchange="updateField(\'' + id + '\', \'category\', this.value)">' +
-                '<option value="شلوار و دامن" ' + (item.category === 'شلوار و دامن' ? 'selected' : '') + '>شلوار و دامن</option>' +
-                '<option value="شال و روسری" ' + (item.category === 'شال و روسری' ? 'selected' : '') + '>شال و روسری</option>' +
-                '<option value="اکسسوری" ' + (item.category === 'اکسسوری' ? 'selected' : '') + '>اکسسوری</option>' +
-                '<option value="دورس" ' + (item.category === 'دورس' ? 'selected' : '') + '>دورس</option>' +
-                '<option value="هودی و کت" ' + (item.category === 'هودی و کت' ? 'selected' : '') + '>هودی و کت</option>' +
-                '<option value="بلوز" ' + (item.category === 'بلوز' ? 'selected' : '') + '>بلوز</option>' +
-            '</select></div>' +
-            '<div class="field"><label>موجودی</label>' +
-            '<input type="number" value="' + (item.stock || 0) + '" onchange="updateField(\'' + id + '\', \'stock\', parseInt(this.value) || 0)"></div>' +
-        '</div>' +
-        '<div class="row">' +
-            '<div class="field"><label>رنگ‌ها (با کاما جدا کن)</label>' +
-            '<input type="text" value="' + colorsStr + '" onchange="updateField(\'' + id + '\', \'colors\', this.value.split(\',\').map(function(c){return c.trim();}).filter(Boolean))"></div>' +
-        '</div>' +
-        '<div class="row">' +
-            '<div class="field"><label>توضیحات</label>' +
-            '<textarea onchange="updateField(\'' + id + '\', \'description\', this.value)">' + (item.description || '') + '</textarea></div>' +
-        '</div>' +
-        '<div class="row" style="align-items:center;">' +
-            imgPreview +
-            '<input type="file" id="file-' + id + '" accept="image/*" style="display:none;" onchange="uploadImage(event, \'' + id + '\')">' +
-            '<button class="upload-btn" onclick="document.getElementById(\'file-' + id + '\').click()">📷 آپلود عکس</button>' +
-        '</div>' +
-        '<div class="actions">' +
-            '<button class="delete-btn" onclick="deleteItem(\'' + id + '\')">🗑️ حذف</button>' +
-        '</div>' +
-    '</div>';
+        '<div class="row"><div class="field"><label>نام محصول</label><input type="text" value="' + (item.name || '') + '" onchange="updateField(\'' + id + '\', \'name\', this.value)"></div></div>' +
+        '<div class="row"><div class="field"><label>قیمت (تومان)</label><input type="number" value="' + (item.price || 0) + '" onchange="updateField(\'' + id + '\', \'price\', parseInt(this.value) || 0)"></div><div class="field"><label>قیمت قدیم (اختیاری)</label><input type="number" value="' + (item.old_price || '') + '" onchange="updateField(\'' + id + '\', \'old_price\', this.value ? parseInt(this.value) : null)"></div></div>' +
+        '<div class="row"><div class="field"><label>دسته‌بندی</label><select onchange="updateField(\'' + id + '\', \'category\', this.value)">' +
+        '<option value="شلوار و دامن" ' + (item.category === 'شلوار و دامن' ? 'selected' : '') + '>شلوار و دامن</option>' +
+        '<option value="شال و روسری" ' + (item.category === 'شال و روسری' ? 'selected' : '') + '>شال و روسری</option>' +
+        '<option value="اکسسوری" ' + (item.category === 'اکسسوری' ? 'selected' : '') + '>اکسسوری</option>' +
+        '<option value="دورس" ' + (item.category === 'دورس' ? 'selected' : '') + '>دورس</option>' +
+        '<option value="هودی و کت" ' + (item.category === 'هودی و کت' ? 'selected' : '') + '>هودی و کت</option>' +
+        '<option value="بلوز" ' + (item.category === 'بلوز' ? 'selected' : '') + '>بلوز</option>' +
+        '</select></div><div class="field"><label>موجودی</label><input type="number" value="' + (item.stock || 0) + '" onchange="updateField(\'' + id + '\', \'stock\', parseInt(this.value) || 0)"></div></div>' +
+        '<div class="row"><div class="field"><label>رنگ‌ها (با کاما جدا کن)</label><input type="text" value="' + colorsStr + '" onchange="updateField(\'' + id + '\', \'colors\', this.value.split(\',\').map(function(c){return c.trim();}).filter(Boolean))"></div></div>' +
+        '<div class="row"><div class="field"><label>توضیحات</label><textarea onchange="updateField(\'' + id + '\', \'description\', this.value)">' + (item.description || '') + '</textarea></div></div>' +
+        '<div class="row" style="align-items:center;">' + imgPreview +
+        '<input type="file" id="file-' + id + '" accept="image/*" style="display:none;" onchange="uploadImage(event, \'' + id + '\')">' +
+        '<button class="upload-btn" onclick="document.getElementById(\'file-' + id + '\').click()">📷 آپلود عکس</button></div>' +
+        '<div class="actions"><button class="delete-btn" onclick="deleteItem(\'' + id + '\')">🗑️ حذف</button></div>' +
+        '</div>';
 }
 
 function updateField(id, field, value) {
@@ -353,10 +370,7 @@ function updateField(id, field, value) {
         if (!editedItems[id]) {
             editedItems[id] = {};
             for (var i = 0; i < allItems.length; i++) {
-                if (allItems[i].id == id) {
-                    editedItems[id] = Object.assign({}, allItems[i]);
-                    break;
-                }
+                if (allItems[i].id == id) { editedItems[id] = Object.assign({}, allItems[i]); break; }
             }
         }
         editedItems[id][field] = value;
@@ -365,107 +379,93 @@ function updateField(id, field, value) {
 
 function deleteItem(id) {
     if (!confirm('این محصول حذف بشه؟')) return;
-
     if (id.indexOf('new-') === 0) {
         var idx = parseInt(id.substring(4));
         newItems.splice(idx, 1);
     } else {
-        deletedItems.push(parseInt(id));
+        deletedItems.push(id);
         delete editedItems[id];
     }
     renderItems();
 }
 
 function addNewItem() {
-    newItems.push({
-        name: 'محصول جدید',
-        price: 0,
-        old_price: null,
-        category: 'شلوار و دامن',
-        stock: 1,
-        colors: [],
-        description: '',
-        img: '',
-        featured: true
-    });
+    newItems.push({ name: 'محصول جدید', price: 0, old_price: null, category: 'شلوار و دامن', stock: 1, colors: [], description: '', image: '', featured: true, active: true });
     renderItems();
 }
 
-// ===== آپلود عکس =====
 async function uploadImage(event, itemId) {
     var file = event.target.files[0];
     if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-        showStatus('❌ حجم عکس بیشتر از ۵ مگابایته!', 'error');
-        return;
-    }
-
+    if (file.size > 5 * 1024 * 1024) { showStatus('❌ حجم عکس بیشتر از ۵ مگابایته!', 'error'); return; }
     showStatus('⏳ در حال آپلود عکس...', 'loading');
-
     var ext = file.name.split('.').pop().toLowerCase();
     var fileName = 'img_' + Date.now() + '.' + ext;
-
     var result = await db.storage.from('hoor-images').upload(fileName, file, { cacheControl: '3600', upsert: false });
-
-    if (result.error) {
-        showStatus('❌ خطا: ' + result.error.message, 'error');
-        return;
-    }
-
+    if (result.error) { showStatus('❌ خطا: ' + result.error.message, 'error'); return; }
     var urlResult = db.storage.from('hoor-images').getPublicUrl(fileName);
-    var publicUrl = urlResult.data.publicUrl;
-
-    updateField(itemId, 'img', publicUrl);
-
+    updateField(itemId, 'image', urlResult.data.publicUrl);
     showStatus('✅ عکس آپلود شد! حالا "ذخیره تغییرات" رو بزن', 'success');
     setTimeout(function() { renderItems(); }, 500);
 }
 
-async function saveAllChanges() {
+// ===== تنظیمات سایت =====
+async function loadSettings() {
+    var result = await db.from('settings').select('*').eq('id', 1).single();
+    if (result.error || !result.data) return;
+    settings = result.data;
+    document.getElementById('set-hero-text').value = settings.hero_text || '';
+    document.getElementById('set-hero-subtitle').value = settings.hero_subtitle || '';
+    document.getElementById('set-about-text').value = settings.about_text || '';
+    document.getElementById('set-phone').value = settings.phone || '';
+    document.getElementById('set-instagram').value = settings.instagram || '';
+    document.getElementById('set-address').value = settings.address || '';
+}
+
+// ===== ذخیره همه =====
+async function saveChanges() {
     document.getElementById('saveBtn').disabled = true;
     showStatus('⏳ در حال ذخیره...', 'loading');
-
     try {
-        // Delete
+        // محصولات
         if (deletedItems.length > 0) {
-            var delResult = await db.from('hoor_products').delete().in('id', deletedItems);
+            var delResult = await db.from('products').delete().in('id', deletedItems);
             if (delResult.error) throw delResult.error;
         }
-
-        // Update
         for (var id in editedItems) {
             var u = editedItems[id];
-            var updResult = await db.from('hoor_products').update({
-                name: u.name,
-                price: u.price,
-                old_price: u.old_price,
-                category: u.category,
-                stock: u.stock,
-                colors: u.colors,
-                description: u.description,
-                img: u.img
+            var updResult = await db.from('products').update({
+                name: u.name, price: u.price, old_price: u.old_price, category: u.category,
+                stock: u.stock, colors: u.colors, description: u.description, image: u.image
             }).eq('id', id);
             if (updResult.error) throw updResult.error;
         }
-
-        // Insert new
         if (newItems.length > 0) {
-            var insResult = await db.from('hoor_products').insert(newItems);
+            var insResult = await db.from('products').insert(newItems);
             if (insResult.error) throw insResult.error;
         }
+
+        // تنظیمات
+        var settingsUpdate = {
+            hero_text: document.getElementById('set-hero-text').value,
+            hero_subtitle: document.getElementById('set-hero-subtitle').value,
+            about_text: document.getElementById('set-about-text').value,
+            phone: document.getElementById('set-phone').value,
+            instagram: document.getElementById('set-instagram').value,
+            address: document.getElementById('set-address').value
+        };
+        var settResult = await db.from('settings').update(settingsUpdate).eq('id', 1);
+        if (settResult.error) throw settResult.error;
 
         editedItems = {};
         deletedItems = [];
         newItems = [];
 
         showStatus('✅ تغییرات ذخیره شد!', 'success');
-        setTimeout(function() { loadItems(); }, 1000);
-
+        setTimeout(function() { loadItems(); loadSettings(); }, 1000);
     } catch (err) {
         showStatus('❌ خطا: ' + err.message, 'error');
     }
-
     document.getElementById('saveBtn').disabled = false;
 }
 
@@ -473,14 +473,9 @@ function showStatus(text, type) {
     var el = document.getElementById('status');
     el.textContent = text;
     el.className = 'status ' + type;
-    if (type !== 'loading') {
-        setTimeout(function() { el.className = 'status'; }, 5000);
-    }
+    if (type !== 'loading') setTimeout(function() { el.className = 'status'; }, 5000);
 }
-
-function hideStatus() {
-    document.getElementById('status').className = 'status';
-}
+function hideStatus() { document.getElementById('status').className = 'status'; }
 </script>
 </body>
 </html>
