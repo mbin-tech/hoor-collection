@@ -1,4 +1,3 @@
-
 /* eslint-disable */
 // @ts-nocheck
 
@@ -51,10 +50,6 @@ function resetSliderTimer() {
     clearInterval(sliderInterval);
     startSliderTimer();
 }
-if (slidesCount > 0) {
-    updateDots();
-    startSliderTimer();
-}
 
 // ===== LANDING =====
 function goToShop() {
@@ -68,8 +63,10 @@ function goToShop() {
 
 // ===== MENU =====
 function toggleMenu() {
-    document.getElementById('sideMenu').classList.toggle('show');
-    document.getElementById('menuOverlay').classList.toggle('show');
+    var menu = document.getElementById('sideMenu');
+    var overlay = document.getElementById('menuOverlay');
+    if (menu) menu.classList.toggle('show');
+    if (overlay) overlay.classList.toggle('show');
 }
 
 // ===== MODALS =====
@@ -154,7 +151,6 @@ async function loadProductsFromSupabase() {
 
         if (error) throw error;
 
-        // حذف محصولات تکراری بر اساس شناسه
         tempProducts = Array.from(
             new Map(
                 (data || []).map(function(p) {
@@ -772,6 +768,10 @@ function addNewPaymentMethods() {
 
 // ===== INIT =====
 function initializeStore() {
+    if (slidesCount > 0) {
+        updateDots();
+        startSliderTimer();
+    }
     loadProductsFromSupabase();
     updateCartBar();
     checkUserLogin();
