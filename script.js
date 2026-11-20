@@ -374,3 +374,6 @@ window.addEventListener('DOMContentLoaded', function() {
     updateCartBar();
     checkUserLogin();
 });
+// اتصال توابع پرداخت به دکمه‌های HTML
+window.payWithTorobPay = payWithTorobPay;
+window.payWithZarinpal = payWithZarinpal;
