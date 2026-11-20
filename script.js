@@ -377,3 +377,36 @@ window.addEventListener('DOMContentLoaded', function() {
 // اتصال توابع پرداخت به دکمه‌های HTML
 window.payWithTorobPay = payWithTorobPay;
 window.payWithZarinpal = payWithZarinpal;
+
+
+// ===== اضافه کردن اسنپ پی و دیجی پی =====
+function addNewPaymentMethods() {
+    var paymentList = document.querySelector('#checkoutPage .menu-list');
+
+    if (!paymentList) return;
+
+    if (document.getElementById('snappPayButton')) return;
+
+    paymentList.insertAdjacentHTML('beforeend', `
+        <button id="snappPayButton" onclick="showToast('درگاه اسنپ‌پی به‌زودی فعال می‌شود')" style="opacity:0.6;">
+            <span style="font-size:20px;">🟢</span>
+            <div style="flex:1; text-align:right; margin-right:10px;">
+                <div style="font-weight:700; font-size:14px;">پرداخت اقساطی (اسنپ‌پی)</div>
+                <div style="font-size:11px; color:var(--text-light); margin-top:4px;">به‌زودی فعال می‌شود</div>
+            </div>
+            <span class="arrow">‹</span>
+        </button>
+
+        <button id="digiPayButton" onclick="showToast('درگاه دیجی‌پی به‌زودی فعال می‌شود')" style="opacity:0.6;">
+            <span style="font-size:20px;">🟠</span>
+            <div style="flex:1; text-align:right; margin-right:10px;">
+                <div style="font-weight:700; font-size:14px;">پرداخت اقساطی (دیجی‌پی)</div>
+                <div style="font-size:11px; color:var(--text-light); margin-top:4px;">به‌زودی فعال می‌شود</div>
+            </div>
+            <span class="arrow">‹</span>
+        </button>
+    `);
+}
+
+document.addEventListener('DOMContentLoaded', addNewPaymentMethods);
+
