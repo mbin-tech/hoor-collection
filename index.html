@@ -297,24 +297,51 @@
 
         <h3 class="page-title" style="font-size:15px; margin-top:30px; margin-bottom:15px; border-top:1px dashed var(--pink); padding-top:20px;">روش پرداخت را انتخاب کنید</h3>
 
-        <div class="menu-list">
-            <button onclick="payWithTorobPay()">
-                <span style="font-size:20px;">💰</span>
-                <div style="flex:1; text-align:right; margin-right:10px;">
-                    <div style="font-weight:700; font-size:14px;">پرداخت اقساطی (ترب پی)</div>
-                    <div style="font-size:11px; color:var(--text-light); margin-top:4px;">پرداخت در ۴ قسط بدون بهره</div>
-                </div>
-                <span class="arrow">‹</span>
-            </button>
-            <button onclick="payWithZarinpal()" style="opacity:0.6;">
-                <span style="font-size:20px;">💳</span>
-                <div style="flex:1; text-align:right; margin-right:10px;">
-                    <div style="font-weight:700; font-size:14px;">پرداخت آنلاین (زرین‌پال)</div>
-                    <div style="font-size:11px; color:var(--text-light); margin-top:4px;">به زودی...</div>
-                </div>
-                <span class="arrow">‹</span>
-            </button>
+        
+<div class="menu-list">
+
+    <!-- ترب پی -->
+    <button onclick="payWithTorobPay()">
+        <span style="font-size:20px;">💰</span>
+        <div style="flex:1; text-align:right; margin-right:10px;">
+            <div style="font-weight:700; font-size:14px;">پرداخت اقساطی (ترب‌پی)</div>
+            <div style="font-size:11px; color:var(--text-light); margin-top:4px;">پرداخت در ۴ قسط بدون بهره</div>
         </div>
+        <span class="arrow">‹</span>
+    </button>
+
+    <!-- زرین پال -->
+    <button onclick="payWithZarinpal()" style="opacity:0.6;">
+        <span style="font-size:20px;">💳</span>
+        <div style="flex:1; text-align:right; margin-right:10px;">
+            <div style="font-weight:700; font-size:14px;">پرداخت آنلاین (زرین‌پال)</div>
+            <div style="font-size:11px; color:var(--text-light); margin-top:4px;">به‌زودی فعال می‌شود</div>
+        </div>
+        <span class="arrow">‹</span>
+    </button>
+
+    <!-- اسنپ پی -->
+    <button onclick="showToast('درگاه اسنپ‌پی به‌زودی فعال می‌شود')" style="opacity:0.6;">
+        <span style="font-size:20px;">🟢</span>
+        <div style="flex:1; text-align:right; margin-right:10px;">
+            <div style="font-weight:700; font-size:14px;">پرداخت اقساطی (اسنپ‌پی)</div>
+            <div style="font-size:11px; color:var(--text-light); margin-top:4px;">به‌زودی فعال می‌شود</div>
+        </div>
+        <span class="arrow">‹</span>
+    </button>
+
+    <!-- دیجی پی -->
+    <button onclick="showToast('درگاه دیجی‌پی به‌زودی فعال می‌شود')" style="opacity:0.6;">
+        <span style="font-size:20px;">🟠</span>
+        <div style="flex:1; text-align:right; margin-right:10px;">
+            <div style="font-weight:700; font-size:14px;">پرداخت اقساطی (دیجی‌پی)</div>
+            <div style="font-size:11px; color:var(--text-light); margin-top:4px;">به‌زودی فعال می‌شود</div>
+        </div>
+        <span class="arrow">‹</span>
+    </button>
+
+</div>
+
     </div>
 </div>
 
