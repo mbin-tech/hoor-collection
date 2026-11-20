@@ -305,46 +305,64 @@ function checkout() {
     openPage('checkoutPage');
 }
 
-// ===== درگاه‌ها =====
+// ===== درگاه‌ها ====
+
 async function payWithTorobPay() {
     var name = document.getElementById('checkoutName').value.trim();
     var phone = document.getElementById('checkoutPhone').value.trim();
     var address = document.getElementById('checkoutAddress').value.trim();
 
-    if (!name || !phone || !address) { showToast('لطفاً همه اطلاعات را کامل کنید'); return; }
+    var postalInput = document.getElementById('checkoutPostalCode');
+    var notesInput = document.getElementById('checkoutDescription');
 
-    var total = cart.reduce(function(s, i) { return s + (i.price * i.qty); }, 0);
+    var postalCode = postalInput ? postalInput.value.trim() : '';
+    var orderNotes = notesInput ? notesInput.value.trim() : '';
+
+    if (!name || !phone || !address) {
+        showToast('لطفاً نام، موبایل و آدرس را کامل کنید');
+        return;
+    }
+
+    if (cart.length === 0) {
+        showToast('سبد خرید خالی است');
+        return;
+    }
+
+    var total = cart.reduce(function(s, i) {
+        return s + (i.price * i.qty);
+    }, 0);
 
     try {
         showToast('در حال ثبت سفارش...');
-        
-        // ذخیره سفارش تو دیتابیس
-        const { data, error } = await db.from('orders').insert([{
+
+        const { error } = await db.from('orders').insert([{
             customer_name: name,
             phone: phone,
             address: address,
+            postal_code: postalCode,
+            order_notes: orderNotes,
             items: cart,
             total: total,
             status: 'pending',
             payment_method: 'torobpay'
-        }]).select();
+        }]);
 
         if (error) throw error;
-        
-        // پاک کردن سبد
+
+        showToast('سفارش ثبت شد؛ انتقال به ترب‌پی...');
+
         cart = [];
         saveCart();
         updateCartBar();
 
-        showToast('سفارش ثبت شد. انتقال به درگاه...');
-        var torobLink = 'https://torobpay.com/pay/00287566';
-        setTimeout(function() { window.location.href = torobLink; }, 1500);
+        window.location.href = 'https://torobpay.com/pay/00287566';
 
     } catch (error) {
-        console.error(error);
-        showToast('خطا در ثبت سفارش');
+        console.error('TorobPay Error:', error);
+        showToast('ثبت سفارش ناموفق بود؛ دوباره تلاش کنید');
     }
 }
+
 
 function payWithZarinpal() {
     showToast('درگاه زرین‌پال در حال راه‌اندازی است...');
