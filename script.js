@@ -610,3 +610,52 @@ window.checkout = checkout;
 window.openCart = openCart;
 window.changeQty = changeQty;
 window.showToast = showToast;
+// ===== LOAD SITE SETTINGS =====
+async function loadSettings() {
+    try {
+        const { data, error } = await db.from('settings').select('*').eq('id', 1).single();
+        if (error) throw error;
+        if (!data) return;
+
+        // آپدیت متن لندینگ
+        var subLines = document.querySelectorAll('.landing-sub .sub-line');
+        if (subLines.length >= 2) {
+            subLines[0].textContent = data.hero_text || 'پروانه‌ای برای بال‌های تو';
+            subLines[1].textContent = data.hero_subtitle || 'پوشاک زنانه اسپرت با طعم لطافت';
+        }
+
+        // آپدیت متن درباره ما
+        var aboutTexts = document.querySelectorAll('#aboutPage .about-text');
+        if (aboutTexts.length > 0 && data.about_text) {
+            aboutTexts[0].textContent = data.about_text;
+        }
+
+        // آپدیت شماره تماس و آدرس
+        var contactValues = document.querySelectorAll('#contactPage .contact-value');
+        if (contactValues.length > 0) {
+            if (data.phone) contactValues[0].textContent = data.phone;
+        }
+        var contactAddress = document.querySelectorAll('#contactPage .contact-value');
+        if (contactAddress.length >= 4 && data.address) {
+            contactAddress[3].textContent = data.address;
+        }
+
+        // آپدیت اینستاگرام
+        var instaLink = document.querySelectorAll('#contactPage .contact-value');
+        if (instaLink.length >= 3 && data.instagram) {
+            instaLink[2].textContent = '@' + data.instagram;
+        }
+
+        // آپدیت فوتر
+        var footerItems = document.querySelectorAll('.footer-item');
+        if (footerItems.length > 0 && data.address) {
+            footerItems[0].innerHTML = '<span class="icon">📍</span> ' + data.address;
+        }
+        if (footerItems.length > 3 && data.phone) {
+            footerItems[3].innerHTML = '<span class="icon">📞</span> ' + data.phone;
+        }
+
+    } catch (e) {
+        console.error('Error loading settings:', e);
+    }
+}
