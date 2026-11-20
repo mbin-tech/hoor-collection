@@ -359,7 +359,7 @@ async function payWithTorobPay() {
 
     } catch (error) {
         console.error('TorobPay Error:', error);
-        showToast('ثبت سفارش ناموفق بود؛ دوباره تلاش کنید');
+        showToast('خطا: ' + error.message);
     }
 }
 
