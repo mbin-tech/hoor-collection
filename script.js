@@ -101,17 +101,19 @@ async function loadProductsFromSupabase() {
         const { data, error } = await db.from('products').select('*').eq('active', true).order('created_at', { ascending: false });
         if (error) throw error;
         
-        tempProducts = data.map(p => ({
-            id: p.id,
-            name: p.name,
-            category: p.category || 'سایر',
-            price: p.price,
-            old_price: p.old_price,
-            img: p.image,
-            stock: p.stock,
-            description: p.description || '',
-            images: [p.image] // فعلاً یک عکس
-        }));
+        tempProducts = Array.from(
+    new Map(data.map(p => [p.id, {
+        id: String(p.id),
+        name: p.name,
+        category: p.category || 'سایر',
+        price: Number(p.price),
+        old_price: Number(p.old_price) || 0,
+        img: p.image,
+        stock: Number(p.stock) || 0,
+        description: p.description || '',
+        images: [p.image]
+    }])).values()
+        
         
         renderCategories();
         renderFeaturedProducts();
@@ -149,10 +151,12 @@ function createProductCard(p) {
     var priceHtml = p.price.toLocaleString() + ' تومان'; 
     if (p.old_price) { priceHtml = p.price.toLocaleString() + ' <span class="old">' + p.old_price.toLocaleString() + '</span>'; }
     
-    var btnHtml = p.stock > 0 ? '<button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(' + p.id + ')">افزودن به سبد</button>' : '<button class="add-to-cart-btn" disabled>ناموجود</button>';
+    var btnHtml = p.stock > 0
+? '<button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(' + JSON.stringify(p.id) + ')">افزودن به سبد</button>'
+: '<button class="add-to-cart-btn" disabled>اتمام موجودی</button>';
     var isFav = favorites.indexOf(p.id) !== -1;
     
-    var html = '<div class="product-card" onclick="openProduct(' + p.id + ')">';
+    var html = '<div class="product-card" onclick="openProduct(' + JSON.stringify(p.id) + ')">';
     html += '<div class="product-img">';
     html += '<button class="fav-btn ' + (isFav ? 'active' : '') + '" onclick="event.stopPropagation(); toggleFavorite(' + p.id + ')">' + (isFav ? '♥' : '♡') + '</button>';
     if (badge) html += badge;
