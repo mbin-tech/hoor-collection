@@ -151,6 +151,7 @@ async function loadProductsFromSupabase() {
 
         if (error) throw error;
 
+        // حذف محصولات تکراری بر اساس شناسه (استفاده از Map)
         tempProducts = Array.from(
             new Map(
                 (data || []).map(function(p) {
@@ -530,7 +531,10 @@ function filterByCategory(catName) {
 function openProduct(id) {
     id = String(id);
     var p = tempProducts.find(function(x) { return String(x.id) === id; });
-    if (!p) return;
+    if (!p) {
+        console.error('Product not found with id:', id);
+        return;
+    }
 
     var imgs = (p.images && p.images.length) ? p.images : (p.img ? [p.img] : []);
     var html = '';
@@ -717,7 +721,6 @@ async function payWithTorobPay() {
 
         showToast('سفارش ثبت شد؛ انتقال به ترب‌پی...');
 
-        // فعلاً سبد خرید پاک نمی‌شود تا وضعیت پرداخت مشخص شود.
         window.open('https://torobpay.com/pay/00287566', '_blank');
 
     } catch (error) {
