@@ -137,52 +137,16 @@ var tempCategories = [
     { id: 6, name: 'بلوز', icon: 'cat-bloooz.png' }
 ];
 
-var tempProducts = [];
+// ⚠️ محصولات به صورت دستی وارد شده‌اند
+var tempProducts = [
+    { id: "1", name: 'کت آهویی', category: 'هودی و کت', price: 4980000, old_price: null, img: 'kat-ahooi-1.jpg', images: ['kat-ahooi-1.jpg'], stock: 3, featured: true, colors: ['تک رنگ'], sizes: [], description: 'فری سایز تا ۴۴' },
+    { id: "2", name: 'کت کابوی', category: 'هودی و کت', price: 5100000, old_price: null, img: 'kat-cowboy-1.jpg', images: ['kat-cowboy-1.jpg'], stock: 3, featured: true, colors: ['-'], sizes: [], description: 'قد ۶۰ - فری سایز تا ۴۴' },
+    { id: "3", name: 'بافت', category: 'بلوز', price: 3980000, old_price: null, img: 'bafte-1.jpg', images: ['bafte-1.jpg', 'bafte-2.jpg', 'bafte-3.jpg', 'bafte-4.jpg', 'bafte-5.jpg'], stock: 1, featured: true, colors: ['سفید', 'آبی', 'مشکی'], sizes: ['فری سایز'], description: 'قد ۵۶ - فری سایز ۳۴ تا ۴۴' },
+    { id: "4", name: 'دورس', category: 'دورس', price: 3980000, old_price: null, img: 'doores-1.jpg', images: ['doores-1.jpg','doores-2.jpg', 'doores-3.jpg', 'doores-4.jpg', 'doores-5.jpg'], stock: 1, featured: true, colors: ['سفید', 'مشکی'], sizes: [], description: '' },
+    { id: "5", name: 'تل پرادا', category: 'اکسسوری', price: 480000, old_price: null, img: 'telle-parada-1.jpg', images: ['telle-parada-1.jpg'], stock: 11, featured: true, colors: ['مشکی', 'قهوه‌ای', 'قرمز'], sizes: [], description: 'تزئین مو' }
+];
+
 var currentFilter = 'all';
-
-// ===== PRODUCTS FROM SUPABASE =====
-async function loadProductsFromSupabase() {
-    try {
-        const { data, error } = await db
-            .from('products')
-            .select('*')
-            .eq('active', true)
-            .order('created_at', { ascending: false });
-
-        if (error) throw error;
-
-        // حذف محصولات تکراری بر اساس شناسه (استفاده از Map)
-        tempProducts = Array.from(
-            new Map(
-                (data || []).map(function(p) {
-                    return [String(p.id), {
-                        id: String(p.id),
-                        name: p.name,
-                        category: p.category || 'سایر',
-                        price: Number(p.price) || 0,
-                        old_price: Number(p.old_price) || 0,
-                        img: p.image,
-                        stock: Number(p.stock) || 0,
-                        description: p.description || '',
-                        images: p.image ? [p.image] : []
-                    }];
-                })
-            ).values()
-        );
-
-        renderCategories();
-        renderFeaturedProducts();
-
-        var allPage = document.getElementById('allProductsPage');
-        if (allPage && allPage.classList.contains('show')) {
-            renderAllProducts(currentFilter);
-        }
-
-    } catch (e) {
-        console.error('Error loading products:', e);
-        showToast('خطا در بارگذاری محصولات');
-    }
-}
 
 // ===== RENDER CATEGORIES =====
 function renderCategories() {
@@ -226,7 +190,6 @@ function createProductCard(p) {
 
     var isFav = favorites.indexOf(String(p.id)) !== -1;
 
-    // ⚠️ اینجا به جای onclick از کاما استفاده کردیم تا مشکل کدهای HTML حل بشه
     var html = '<div class="product-card" onclick="openProduct(' + id + ')">';
     html += '<div class="product-img">';
     html += '<button class="fav-btn ' + (isFav ? 'active' : '') + '" onclick="event.stopPropagation(); toggleFavorite(' + id + ')">' + (isFav ? '♥' : '♡') + '</button>';
@@ -777,7 +740,8 @@ function initializeStore() {
         updateDots();
         startSliderTimer();
     }
-    loadProductsFromSupabase();
+    renderCategories();
+    renderFeaturedProducts();
     updateCartBar();
     checkUserLogin();
     addNewPaymentMethods();
