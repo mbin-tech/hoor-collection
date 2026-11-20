@@ -226,6 +226,7 @@ function createProductCard(p) {
 
     var isFav = favorites.indexOf(String(p.id)) !== -1;
 
+    // ⚠️ اینجا به جای onclick از کاما استفاده کردیم تا مشکل کدهای HTML حل بشه
     var html = '<div class="product-card" onclick="openProduct(' + id + ')">';
     html += '<div class="product-img">';
     html += '<button class="fav-btn ' + (isFav ? 'active' : '') + '" onclick="event.stopPropagation(); toggleFavorite(' + id + ')">' + (isFav ? '♥' : '♡') + '</button>';
@@ -533,6 +534,7 @@ function openProduct(id) {
     var p = tempProducts.find(function(x) { return String(x.id) === id; });
     if (!p) {
         console.error('Product not found with id:', id);
+        showToast('محصول مورد نظر یافت نشد');
         return;
     }
 
