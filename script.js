@@ -127,7 +127,7 @@ function openPortfolio() {
     }
 }
 
-// ===== TEMP DATA (محصولات از خود کد) =====
+// ===== TEMP DATA =====
 var tempCategories = [
     { id: 1, name: 'شلوار و دامن', icon: 'cat-shlvar.png' },
     { id: 2, name: 'شال و روسری', icon: 'cat-shal.png' },
@@ -137,17 +137,49 @@ var tempCategories = [
     { id: 6, name: 'بلوز', icon: 'cat-bloooz.png' }
 ];
 
-var tempProducts = [
-    { id: 1, name: 'کت آهویی', category: 'هودی و کت', price: 4980000, old_price: null, img: 'kat-ahooi-1.jpg', images: ['kat-ahooi-1.jpg'], stock: 3, featured: true, colors: ['تک رنگ'], sizes: [], description: 'فری سایز تا ۴۴' },
-    { id: 2, name: 'کت کابوی', category: 'هودی و کت', price: 5100000, old_price: null, img: 'kat-cowboy-1.jpg', images: ['kat-cowboy-1.jpg'], stock: 3, featured: true, colors: ['-'], sizes: [], description: 'قد ۶۰ - فری سایز تا ۴۴' },
-    { id: 3, name: 'بافت', category: 'بلوز', price: 3980000, old_price: null, img: 'bafte-1.jpg', images: ['bafte-1.jpg', 'bafte-2.jpg', 'bafte-3.jpg', 'bafte-4.jpg', 'bafte-5.jpg'], stock: 1, featured: true, colors: ['سفید', 'آبی', 'مشکی'], sizes: ['فری سایز'], description: 'قد ۵۶ - فری سایز ۳۴ تا ۴۴' },
-    { id: 4, name: 'دورس', category: 'دورس', price: 3980000, old_price: null, img: 'doores-1.jpg', images: ['doores-1.jpg','doores-2.jpg', 'doores-3.jpg', 'doores-4.jpg', 'doores-5.jpg'], stock: 1, featured: true, colors: ['سفید', 'مشکی'], sizes: [], description: '' },
-    { id: 5, name: 'تل پرادا', category: 'اکسسوری', price: 480000, old_price: null, img: 'telle-parada-1.jpg', images: ['telle-parada-1.jpg'], stock: 11, featured: true, colors: ['مشکی', 'قهوه‌ای', 'قرمز'], sizes: [], description: 'تزئین مو' }
-];
-
+var tempProducts = [];
 var currentFilter = 'all';
 var cart = JSON.parse(localStorage.getItem('hoor_cart')) || [];
 var favorites = JSON.parse(localStorage.getItem('hoor_favorites')) || [];
+
+// ===== PRODUCTS FROM SUPABASE =====
+async function loadProductsFromSupabase() {
+    try {
+        const { data, error } = await db
+            .from('products')
+            .select('*')
+            .eq('active', true)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        tempProducts = (data || []).map(function(p) {
+            return {
+                id: p.id,
+                name: p.name,
+                category: p.category || 'سایر',
+                price: Number(p.price) || 0,
+                old_price: Number(p.old_price) || 0,
+                img: p.image,
+                stock: Number(p.stock) || 0,
+                description: p.description || '',
+                images: p.image ? [p.image] : []
+            };
+        });
+
+        renderCategories();
+        renderFeaturedProducts();
+
+        var allPage = document.getElementById('allProductsPage');
+        if (allPage && allPage.classList.contains('show')) {
+            renderAllProducts(currentFilter);
+        }
+
+    } catch (e) {
+        console.error('Error loading products:', e);
+        showToast('خطا در بارگذاری محصولات');
+    }
+}
 
 // ===== RENDER CATEGORIES =====
 function renderCategories() {
@@ -168,7 +200,7 @@ function renderCategories() {
 
 // ===== CREATE PRODUCT CARD =====
 function createProductCard(p) {
-    var id = p.id; // عدد ساده
+    var id = p.id;
     var badge = '';
 
     if (p.stock <= 0) {
@@ -183,14 +215,14 @@ function createProductCard(p) {
     }
 
     var btnHtml = p.stock > 0
-        ? '<button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(' + id + ')">افزودن به سبد</button>'
+        ? '<button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(\'' + id + '\')">افزودن به سبد</button>'
         : '<button class="add-to-cart-btn" disabled>اتمام موجودی</button>';
 
     var isFav = favorites.indexOf(id) !== -1;
 
-    var html = '<div class="product-card" onclick="openProduct(' + id + ')">';
+    var html = '<div class="product-card" onclick="openProduct(\'' + id + '\')">';
     html += '<div class="product-img">';
-    html += '<button class="fav-btn ' + (isFav ? 'active' : '') + '" onclick="event.stopPropagation(); toggleFavorite(' + id + ')">' + (isFav ? '♥' : '♡') + '</button>';
+    html += '<button class="fav-btn ' + (isFav ? 'active' : '') + '" onclick="event.stopPropagation(); toggleFavorite(\'' + id + '\')">' + (isFav ? '♥' : '♡') + '</button>';
     if (badge) html += badge;
     if (p.img) { html += '<img src="' + p.img + '" alt="' + p.name + '">'; } else { html += '👗'; }
     html += '</div><div class="product-info">';
@@ -265,12 +297,12 @@ function showToast(msg) {
 function saveCart() { localStorage.setItem('hoor_cart', JSON.stringify(cart)); }
 
 function addToCart(productId) {
-    var product = tempProducts.find(function(p) { return p.id === productId; });
+    var product = tempProducts.find(function(p) { return String(p.id) === String(productId); });
     if (!product) return;
 
     if (product.stock <= 0) { showToast('این محصول اتمام موجودی است'); return; }
 
-    var existing = cart.find(function(item) { return item.id === productId; });
+    var existing = cart.find(function(item) { return String(item.id) === String(productId); });
     var alreadyInCart = existing ? existing.qty : 0;
 
     if (alreadyInCart >= product.stock) {
@@ -329,9 +361,9 @@ function renderCartItems() {
         html += '<div class="cart-item-info"><div class="cart-item-name">' + item.name + '</div>';
         html += '<div class="cart-item-price">' + item.price.toLocaleString() + ' تومان</div></div>';
         html += '<div class="cart-item-qty">';
-        html += '<button onclick="changeQty(' + item.id + ', -1)">−</button>';
+        html += '<button onclick="changeQty(\'' + item.id + '\', -1)">−</button>';
         html += '<span>' + item.qty + '</span>';
-        html += '<button onclick="changeQty(' + item.id + ', 1)">+</button>';
+        html += '<button onclick="changeQty(\'' + item.id + '\', 1)">+</button>';
         html += '</div></div>';
     });
 
@@ -340,11 +372,11 @@ function renderCartItems() {
 }
 
 function changeQty(id, delta) {
-    var item = cart.find(function(i) { return i.id === id; });
+    var item = cart.find(function(i) { return String(i.id) === String(id); });
     if (!item) return;
 
     if (delta > 0) {
-        var product = tempProducts.find(function(p) { return p.id === id; });
+        var product = tempProducts.find(function(p) { return String(p.id) === String(id); });
         if (product && item.qty >= product.stock) {
             showToast('بیشتر از موجودی نمی‌توانید سفارش دهید');
             return;
@@ -352,7 +384,7 @@ function changeQty(id, delta) {
     }
 
     item.qty += delta;
-    if (item.qty <= 0) { cart = cart.filter(function(i) { return i.id !== id; }); }
+    if (item.qty <= 0) { cart = cart.filter(function(i) { return String(i.id) !== String(id); }); }
     saveCart(); renderCartItems(); updateCartBar();
 }
 
@@ -360,8 +392,8 @@ function changeQty(id, delta) {
 function saveFavorites() { localStorage.setItem('hoor_favorites', JSON.stringify(favorites)); }
 
 function toggleFavorite(id) {
-    var idx = favorites.indexOf(id);
-    if (idx === -1) { favorites.push(id); showToast('به علاقه‌مندی‌ها اضافه شد ♥'); } 
+    var idx = favorites.indexOf(String(id));
+    if (idx === -1) { favorites.push(String(id)); showToast('به علاقه‌مندی‌ها اضافه شد ♥'); } 
     else { favorites.splice(idx, 1); showToast('از علاقه‌مندی‌ها حذف شد'); }
     saveFavorites(); renderFeaturedProducts();
     if (document.getElementById('allProductsPage').classList.contains('show')) renderAllProducts(currentFilter);
@@ -380,7 +412,7 @@ function renderFavoritesPage() {
     var html = '<div style="text-align:right;margin-bottom:15px;color:#A09098;font-size:12px;">' + favorites.length + ' محصول ذخیره شده</div>';
     html += '<div class="products-grid" style="grid-template-columns:repeat(2,1fr);">';
     favorites.forEach(function(id) {
-        var p = tempProducts.find(function(x) { return x.id === id; });
+        var p = tempProducts.find(function(x) { return String(x.id) === String(id); });
         if (p) html += createProductCard(p);
     });
     html += '</div>';
@@ -405,7 +437,7 @@ function searchProducts() {
     } else {
         var html = '';
         found.forEach(function(p) {
-            html += '<div style="padding:14px 18px;border-bottom:1px solid #F0E4EA;cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="openProduct(' + p.id + ');document.getElementById(\'searchResults\').classList.remove(\'show\');">';
+            html += '<div style="padding:14px 18px;border-bottom:1px solid #F0E4EA;cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="openProduct(\'' + p.id + '\');document.getElementById(\'searchResults\').classList.remove(\'show\');">';
             html += '<span style="font-size:13px;">' + p.name + '</span>';
             html += '<span style="color:#A85D73;font-weight:700;font-size:12px;">' + p.price.toLocaleString() + ' ت</span></div>';
         });
@@ -419,7 +451,7 @@ function filterByCategory(catName) { openAllProducts(); setTimeout(function() { 
 
 // ===== PRODUCT DETAILS =====
 function openProduct(id) {
-    var p = tempProducts.find(function(x) { return x.id === id; });
+    var p = tempProducts.find(function(x) { return String(x.id) === String(id); });
     if (!p) { showToast('محصول یافت نشد'); return; }
 
     var imgs = (p.images && p.images.length) ? p.images : (p.img ? [p.img] : []);
@@ -451,7 +483,7 @@ function openProduct(id) {
     if (p.stock <= 0) { html += '<div class="pd-stock">اتمام موجودی</div>'; }
     html += '</div>';
     html += '<div class="pd-bottom-bar">';
-    if (p.stock > 0) { html += '<button class="pd-buy-btn" onclick="pdAddAndBack(' + p.id + ')">افزودن به سبد خرید</button>'; } 
+    if (p.stock > 0) { html += '<button class="pd-buy-btn" onclick="pdAddAndBack(\'' + p.id + '\')">افزودن به سبد خرید</button>'; } 
     else { html += '<button class="pd-buy-btn" disabled>اتمام موجودی</button>'; }
     html += '</div>';
 
@@ -556,8 +588,7 @@ function payWithZarinpal() { showToast('درگاه زرین‌پال در حال
 // ===== INIT =====
 function initializeStore() {
     if (slidesCount > 0) { updateDots(); startSliderTimer(); }
-    renderCategories();
-    renderFeaturedProducts();
+    loadProductsFromSupabase(); // ⚠️ این خط محصولات رو از دیتابیس می‌خونه
     updateCartBar();
     checkUserLogin();
 }
