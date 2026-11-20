@@ -355,7 +355,7 @@ async function payWithTorobPay() {
         saveCart();
         updateCartBar();
 
-        window.location.href = 'https://torobpay.com/pay/00287566';
+        window.open('https://torobpay.com/pay/00287566', '_blank');
 
     } catch (error) {
         console.error('TorobPay Error:', error);
