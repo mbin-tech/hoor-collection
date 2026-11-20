@@ -358,8 +358,9 @@ async function payWithTorobPay() {
         window.open('https://torobpay.com/pay/00287566', '_blank');
 
     } catch (error) {
-        console.error('TorobPay Error:', error);
-        showToast('خطا: ' + error.message);
+    console.error('TorobPay Error:', error);
+    alert('خطای ثبت سفارش: ' + error.message);
+    
     }
 }
 
