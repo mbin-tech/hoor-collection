@@ -269,7 +269,10 @@ function openProduct(id) {
     if (p.colors && p.colors.length && p.colors[0] !== '-') { html += '<div class="pd-option"><div class="pd-option-label">رنگ</div><div class="pd-chips">'; p.colors.forEach(function(c, i){ html += '<span class="pd-chip '+(i===0?'active':'')+'" onclick="pdSelectChip(this)">'+c+'</span>'; }); html += '</div></div>'; }
     if (p.sizes && p.sizes.length) { html += '<div class="pd-option"><div class="pd-option-label">سایز</div><div class="pd-chips">'; p.sizes.forEach(function(s, i){ html += '<span class="pd-chip '+(i===0?'active':'')+'" onclick="pdSelectChip(this)">'+s+'</span>'; }); html += '</div></div>'; }
     if (p.description) { html += '<div class="pd-desc">'+p.description+'</div>'; }
-    html += '<div class="pd-stock">' + (p.stock > 0 ? 'موجودی: '+p.stock+' عدد' : 'ناموجود') + '</div></div>';
+    if (p.stock <= 0) {
+    html += '<div class="pd-stock">اتمام موجودی</div>';
+}
+html += '</div>';
     html += '<div class="pd-bottom-bar">'; if (p.stock > 0) { html += '<button class="pd-buy-btn" onclick="pdAddAndBack('+p.id+')">افزودن به سبد خرید</button>'; } else { html += '<button class="pd-buy-btn" disabled>ناموجود</button>'; } html += '</div>';
     document.getElementById('productPageTitle').textContent = p.name; document.getElementById('productPageBody').innerHTML = html; openPage('productPage');
 }
