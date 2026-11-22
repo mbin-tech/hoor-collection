@@ -95,8 +95,11 @@ h1 { color: #B56B82; text-align: center; font-size: 22px; margin-bottom: 5px; }
 <div class="status" id="status"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
 <script>
+    // تنظیمات دیتابیس مستقیم اینجا
+    var SUPABASE_URL = 'https://qcxtxuesbvuhraokyzyu.supabase.co';
+    var SUPABASE_KEY = 'sb_publishable_yCHUbgjbnsMNlZWlimYJQg_LlzkSpyE';
+</script>
 var db = null;
 var allItems = [];
 var editedItems = {};
