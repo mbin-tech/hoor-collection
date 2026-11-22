@@ -1,157 +1,537 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>پنل مدیریت حور</title>
+<title>پنل مدیریت حور کالکشن</title>
+
 <style>
-body{font-family:sans-serif;background:#FEFAFB;padding:20px;direction:rtl}
-h1{color:#B56B82;text-align:center}
-.card{background:#fff;padding:20px;border-radius:15px;margin-bottom:15px;box-shadow:0 4px 10px rgba(0,0,0,0.05)}
-input,select,textarea{width:100%;padding:10px;margin:5px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box}
-button{background:#B56B82;color:#fff;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;width:100%;margin-top:10px}
-#loginScreen{margin-top:50px}
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Tahoma, sans-serif;
+    background: #FEFAFB;
+    padding: 20px;
+    direction: rtl;
+    margin: 0;
+    color: #493943;
+}
+
+h1 {
+    color: #B56B82;
+    text-align: center;
+    font-size: 25px;
+    margin-bottom: 30px;
+}
+
+h3 {
+    color: #B56B82;
+    margin-top: 0;
+}
+
+.card {
+    background: #fff;
+    padding: 22px;
+    border-radius: 20px;
+    margin: 20px auto;
+    max-width: 700px;
+    box-shadow: 0 4px 15px rgba(181,107,130,0.10);
+    border: 1px solid #f3e2e8;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 14px;
+    margin: 8px 0 15px;
+    border: 1px solid #ead7df;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    background: #FFFAFC;
+}
+
+button {
+    background: #B56B82;
+    color: white;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+button:active {
+    opacity: .8;
+}
+
+#loginScreen {
+    margin: 45px auto;
+    max-width: 600px;
+    padding: 30px;
+}
+
+#loginError {
+    color: #d32f2f;
+    text-align: center;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.product-item {
+    border-bottom: 1px solid #f1e5ea;
+    padding: 15px 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.delete-btn {
+    background: #e45c69;
+    width: auto;
+    padding: 8px 15px;
+    margin: 0;
+    font-size: 13px;
+}
+
+.small-text {
+    color: #999;
+    font-size: 12px;
+    text-align: center;
+}
 </style>
 </head>
+
 <body>
 
+<!-- صفحه ورود -->
 <div id="loginScreen" class="card">
-    <h1>ورود به پنل</h1>
-    <div id="loginError" style="color:red;font-size:12px;text-align:center"></div>
-    <input type="email" id="email" placeholder="ایمیل">
-    <input type="password" id="password" placeholder="رمز عبور">
-    <button onclick="login()">ورود</button>
+
+    <h1>🔐 ورود به پنل مدیریت</h1>
+
+    <div id="loginError"></div>
+
+    <input
+        type="email"
+        id="email"
+        placeholder="ایمیل"
+        autocomplete="username"
+    >
+
+    <input
+        type="password"
+        id="password"
+        placeholder="رمز عبور"
+        autocomplete="current-password"
+    >
+
+    <button id="loginBtn" onclick="login()">ورود</button>
+
 </div>
 
+<!-- پنل مدیریت -->
 <div id="adminPanel" style="display:none">
-    <h1>پنل مدیریت</h1>
-    <button onclick="logout()" style="background:#fce4e4;color:#c00;margin-bottom:10px">خروج</button>
-    
-    <div class="card">
-        <h3>تنظیمات سایت</h3>
-        <label>متن هدر:</label>
-        <input type="text" id="set-hero-text">
-        <label>درباره ما:</label>
-        <textarea id="set-about-text" rows="3"></textarea>
-        <label>شماره تماس:</label>
-        <input type="text" id="set-phone">
-        <button onclick="saveSettings()">ذخیره تنظیمات</button>
-    </div>
+
+    <h1>پنل مدیریت حور کالکشن 💗</h1>
 
     <div class="card">
-        <h3>افزودن محصول</h3>
-        <label>نام:</label>
-        <input type="text" id="p-name">
-        <label>قیمت:</label>
-        <input type="number" id="p-price">
-        <label>دسته:</label>
+        <button onclick="logout()" style="background:#fce4e4;color:#c00">
+            خروج از پنل
+        </button>
+    </div>
+
+    <!-- تنظیمات -->
+    <div class="card">
+
+        <h3>⚙️ تنظیمات سایت</h3>
+
+        <label>متن هدر:</label>
+        <input type="text" id="set-hero-text">
+
+        <label>درباره ما:</label>
+        <textarea id="set-about-text" rows="4"></textarea>
+
+        <label>شماره تماس:</label>
+        <input type="text" id="set-phone">
+
+        <button onclick="saveSettings()">ذخیره تنظیمات</button>
+
+    </div>
+
+    <!-- افزودن محصول -->
+    <div class="card">
+
+        <h3>➕ افزودن محصول جدید</h3>
+
+        <label>نام محصول:</label>
+        <input type="text" id="p-name" placeholder="نام محصول">
+
+        <label>قیمت (تومان):</label>
+        <input type="number" id="p-price" placeholder="قیمت">
+
+        <label>دسته‌بندی:</label>
         <select id="p-cat">
             <option value="هودی و کت">هودی و کت</option>
             <option value="بلوز">بلوز</option>
             <option value="دورس">دورس</option>
             <option value="اکسسوری">اکسسوری</option>
         </select>
+
         <label>موجودی:</label>
-        <input type="number" id="p-stock">
-        <label>لینک عکس:</label>
+        <input type="number" id="p-stock" value="0">
+
+        <label>لینک عکس محصول:</label>
         <input type="text" id="p-img" placeholder="https://...">
+
         <button onclick="addProduct()">افزودن محصول</button>
+
     </div>
 
+    <!-- محصولات -->
     <div class="card">
-        <h3>لیست محصولات</h3>
-        <div id="list"></div>
+
+        <h3>🛍️ لیست محصولات</h3>
+
+        <div id="list">در حال دریافت محصولات...</div>
+
     </div>
+
 </div>
 
+<!-- کتابخانه Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
+"use strict";
+
 var db = null;
+
 var SUPABASE_URL = 'https://qcxtxuesbvuhraokyzyu.supabase.co';
+
 var SUPABASE_KEY = 'sb_publishable_yCHUbgjbnsMNlZWlimYJQg_LlzkSpyE';
 
-window.onload = function() {
-    if (typeof window.supabase === 'undefined') {
-        document.getElementById('loginError').textContent = 'کتابخانه Supabase لود نشد. VPN را روشن کنید.';
+
+// اتصال به دیتابیس
+window.addEventListener('load', function() {
+
+    var errorBox = document.getElementById('loginError');
+
+    if (!window.supabase) {
+        errorBox.textContent =
+            'کتابخانه Supabase بارگذاری نشد. اتصال اینترنت و VPN را بررسی کنید.';
         return;
     }
-    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    console.log("DB connected");
-}
 
+    try {
+        db = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+    } catch (error) {
+        errorBox.textContent = 'خطا در اتصال به دیتابیس';
+        console.error(error);
+    }
+
+});
+
+
+// ورود مدیر
 async function login() {
-    if (!db) return alert('اتصال به دیتابیس برقرار نیست');
-    var email = document.getElementById('email').value;
-    var pass = document.getElementById('password').value;
-    var res = await db.auth.signInWithPassword({ email: email, password: pass });
-    if (res.error) {
-        document.getElementById('loginError').textContent = res.error.message;
+
+    var errorBox = document.getElementById('loginError');
+    var btn = document.getElementById('loginBtn');
+
+    errorBox.textContent = '';
+
+    if (!db) {
+        errorBox.textContent = 'اتصال دیتابیس برقرار نیست.';
         return;
     }
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('adminPanel').style.display = 'block';
-    loadProducts();
-    loadSettings();
+
+    var email = document.getElementById('email').value.trim();
+    var pass = document.getElementById('password').value;
+
+    if (!email || !pass) {
+        errorBox.textContent = 'ایمیل و رمز عبور را وارد کنید.';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'در حال ورود...';
+
+    try {
+
+        var res = await db.auth.signInWithPassword({
+            email: email,
+            password: pass
+        });
+
+        if (res.error) {
+            errorBox.textContent = 'ایمیل یا رمز عبور اشتباه است.';
+            return;
+        }
+
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+
+        await loadProducts();
+        await loadSettings();
+
+    } catch (error) {
+
+        errorBox.textContent = 'خطا در ورود به پنل. دوباره تلاش کنید.';
+        console.error(error);
+
+    } finally {
+
+        btn.disabled = false;
+        btn.textContent = 'ورود';
+
+    }
+
 }
 
+
+// خروج
 async function logout() {
-    await db.auth.signOut();
+
+    if (!db) return;
+
+    var res = await db.auth.signOut();
+
+    if (res.error) {
+        alert('خروج انجام نشد.');
+        return;
+    }
+
     location.reload();
+
 }
 
+
+// دریافت محصولات
 async function loadProducts() {
-    var res = await db.from('products').select('*');
-    if (res.error) return;
+
     var list = document.getElementById('list');
-    list.innerHTML = '';
-    res.data.forEach(function(p) {
-        list.innerHTML += '<div style="border-bottom:1px solid #eee;padding:5px 0">' + p.name + ' - ' + p.price + ' تومان <button onclick="delProduct(\'' + p.id + '\')" style="background:red;width:auto;margin:0;padding:2px 5px">حذف</button></div>';
-    });
+
+    list.textContent = 'در حال دریافت محصولات...';
+
+    try {
+
+        var res = await db
+            .from('products')
+            .select('*')
+            .order('id', { ascending: false });
+
+        if (res.error) {
+            list.textContent = 'خطا در دریافت محصولات: ' + res.error.message;
+            return;
+        }
+
+        list.innerHTML = '';
+
+        if (!res.data || res.data.length === 0) {
+            list.textContent = 'هنوز محصولی ثبت نشده است.';
+            return;
+        }
+
+        res.data.forEach(function(p) {
+
+            var item = document.createElement('div');
+            item.className = 'product-item';
+
+            var info = document.createElement('span');
+            info.textContent =
+                p.name + ' - ' + Number(p.price).toLocaleString('fa-IR') + ' تومان';
+
+            var del = document.createElement('button');
+            del.className = 'delete-btn';
+            del.textContent = 'حذف';
+
+            del.onclick = function() {
+                delProduct(p.id);
+            };
+
+            item.appendChild(info);
+            item.appendChild(del);
+
+            list.appendChild(item);
+
+        });
+
+    } catch (error) {
+
+        list.textContent = 'خطا در دریافت اطلاعات.';
+        console.error(error);
+
+    }
+
 }
 
+
+// حذف محصول
 async function delProduct(id) {
-    if (!confirm('حذف شود؟')) return;
-    await db.from('products').delete().eq('id', id);
-    loadProducts();
+
+    if (!confirm('از حذف این محصول مطمئن هستید؟')) return;
+
+    try {
+
+        var res = await db
+            .from('products')
+            .delete()
+            .eq('id', id);
+
+        if (res.error) {
+            alert('خطا در حذف محصول: ' + res.error.message);
+            return;
+        }
+
+        alert('محصول حذف شد.');
+        await loadProducts();
+
+    } catch (error) {
+
+        alert('خطا در حذف محصول.');
+        console.error(error);
+
+    }
+
 }
 
+
+// افزودن محصول
 async function addProduct() {
-    var name = document.getElementById('p-name').value;
+
+    var name = document.getElementById('p-name').value.trim();
     var price = document.getElementById('p-price').value;
     var cat = document.getElementById('p-cat').value;
     var stock = document.getElementById('p-stock').value;
-    var img = document.getElementById('p-img').value;
-    
-    if (!name || !price) return alert('نام و قیمت الزامی است');
-    
-    await db.from('products').insert([{
-        name: name, price: price, category: cat, stock: stock, image: img, active: true
-    }]);
-    
-    alert('محصول اضافه شد');
-    loadProducts();
-}
+    var img = document.getElementById('p-img').value.trim();
 
-async function loadSettings() {
-    var res = await db.from('settings').select('*').eq('id', 1).single();
-    if (res.data) {
-        document.getElementById('set-hero-text').value = res.data.hero_text || '';
-        document.getElementById('set-about-text').value = res.data.about_text || '';
-        document.getElementById('set-phone').value = res.data.phone || '';
+    if (!name || !price) {
+        alert('نام و قیمت محصول الزامی است.');
+        return;
     }
+
+    try {
+
+        var res = await db
+            .from('products')
+            .insert([{
+                name: name,
+                price: Number(price),
+                category: cat,
+                stock: Number(stock || 0),
+                image: img,
+                active: true
+            }]);
+
+        if (res.error) {
+            alert('خطا در ثبت محصول: ' + res.error.message);
+            return;
+        }
+
+        alert('محصول با موفقیت اضافه شد 💗');
+
+        document.getElementById('p-name').value = '';
+        document.getElementById('p-price').value = '';
+        document.getElementById('p-stock').value = '0';
+        document.getElementById('p-img').value = '';
+
+        await loadProducts();
+
+    } catch (error) {
+
+        alert('خطا در افزودن محصول.');
+        console.error(error);
+
+    }
+
 }
 
+
+// دریافت تنظیمات
+async function loadSettings() {
+
+    try {
+
+        var res = await db
+            .from('settings')
+            .select('*')
+            .eq('id', 1)
+            .single();
+
+        if (res.error) {
+            console.error('Settings:', res.error.message);
+            return;
+        }
+
+        if (res.data) {
+
+            document.getElementById('set-hero-text').value =
+                res.data.hero_text || '';
+
+            document.getElementById('set-about-text').value =
+                res.data.about_text || '';
+
+            document.getElementById('set-phone').value =
+                res.data.phone || '';
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+// ذخیره تنظیمات
 async function saveSettings() {
+
     var hero = document.getElementById('set-hero-text').value;
     var about = document.getElementById('set-about-text').value;
     var phone = document.getElementById('set-phone').value;
-    
-    await db.from('settings').update({
-        hero_text: hero, about_text: about, phone: phone
-    }).eq('id', 1);
-    
-    alert('تنظیمات ذخیره شد');
+
+    try {
+
+        var res = await db
+            .from('settings')
+            .update({
+                hero_text: hero,
+                about_text: about,
+                phone: phone
+            })
+            .eq('id', 1);
+
+        if (res.error) {
+            alert('خطا در ذخیره تنظیمات: ' + res.error.message);
+            return;
+        }
+
+        alert('تنظیمات ذخیره شد 💗');
+
+    } catch (error) {
+
+        alert('خطا در ذخیره تنظیمات.');
+        console.error(error);
+
+    }
+
 }
+
 </script>
+
 </body>
 </html>
