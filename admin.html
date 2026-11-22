@@ -105,15 +105,25 @@ var newItems = [];
 var settings = {};
 var currentTab = 'products';
 
-// فقط سعی کن به دیتابیس وصل بشی
-if (typeof window.supabase !== 'undefined') {
-    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-} else {
-    document.getElementById('loginError').textContent = 'خطا در لود Supabase';
-}
+// ✅ این کد بعد از لود کامل صفحه اجرا می‌شود
+window.addEventListener('load', function() {
+    if (typeof window.supabase === 'undefined') {
+        document.getElementById('loginError').textContent = 'خطا: کتابخانه Supabase لود نشد. VPN را روشن کنید.';
+        return;
+    }
+    
+    if (typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_KEY === 'undefined') {
+        document.getElementById('loginError').textContent = 'خطا: فایل supabase-config.js لود نشد.';
+        return;
+    }
 
-// ⚠️ اینجا دیگه checkAuth() رو صدا نمی‌زنیم
-// و مستقیم صفحه لاگین رو نشون می‌دیم
+    try {
+        db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        console.log("✅ اتصال به دیتابیس برقرار شد");
+    } catch (e) {
+        document.getElementById('loginError').textContent = 'خطا در اتصال: ' + e.message;
+    }
+});
 
 async function login() {
     if (!db) { document.getElementById('loginError').textContent = 'اتصال به دیتابیس برقرار نیست'; return; }
