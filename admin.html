@@ -107,7 +107,7 @@ var currentTab = 'products';
 
 // فقط سعی کن به دیتابیس وصل بشی
 if (typeof window.supabase !== 'undefined') {
-    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 } else {
     document.getElementById('loginError').textContent = 'خطا در لود Supabase';
 }
