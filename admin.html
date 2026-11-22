@@ -8,158 +8,55 @@
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-    font-family: "Vazirmatn", sans-serif;
-    background: #FEFAFB;
-    color: #3D2C38;
-    padding: 15px;
-    padding-bottom: 100px;
-    min-height: 100vh;
-}
+body { font-family: "Vazirmatn", sans-serif; background: #FEFAFB; color: #3D2C38; padding: 15px; padding-bottom: 100px; min-height: 100vh; }
 h1 { color: #B56B82; text-align: center; font-size: 22px; margin-bottom: 5px; }
 .subtitle { text-align: center; color: #A09098; font-size: 13px; margin-bottom: 20px; }
 
-#loginScreen {
-    max-width: 380px; margin: 60px auto;
-    background: #fff; border: 1px solid #F5D5E0;
-    border-radius: 24px; padding: 35px 25px;
-    box-shadow: 0 20px 60px rgba(181, 107, 130, 0.12);
-}
+#loginScreen { max-width: 380px; margin: 60px auto; background: #fff; border: 1px solid #F5D5E0; border-radius: 24px; padding: 35px 25px; box-shadow: 0 20px 60px rgba(181, 107, 130, 0.12); }
 #loginScreen h2 { color: #B56B82; text-align: center; margin-bottom: 20px; font-size: 22px; }
-#loginScreen input {
-    width: 100%; padding: 14px; margin-bottom: 12px;
-    border-radius: 12px; border: 1px solid #F5D5E0;
-    background: #FEFAFB; color: #3D2C38;
-    font-family: inherit; font-size: 15px; text-align: center;
-    outline: none; transition: 0.2s;
-}
+#loginScreen input { width: 100%; padding: 14px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #F5D5E0; background: #FEFAFB; color: #3D2C38; font-family: inherit; font-size: 15px; text-align: center; outline: none; transition: 0.2s; }
 #loginScreen input:focus { border-color: #D48CA0; box-shadow: 0 0 0 4px #FBEDF2; }
-#loginScreen button {
-    width: 100%; padding: 14px; border-radius: 12px;
-    background: #B56B82; color: #fff;
-    font-weight: 700; font-size: 16px; border: none;
-    cursor: pointer; font-family: inherit; margin-top: 8px;
-}
+#loginScreen button { width: 100%; padding: 14px; border-radius: 12px; background: #B56B82; color: #fff; font-weight: 700; font-size: 16px; border: none; cursor: pointer; font-family: inherit; margin-top: 8px; }
 #loginScreen .err { color: #e74c3c; font-size: 13px; text-align: center; margin-bottom: 10px; min-height: 20px; }
 
 #adminPanel { display: none; }
-.user-bar {
-    background: #fff; border: 1px solid #F5D5E0;
-    border-radius: 14px; padding: 12px 16px;
-    margin-bottom: 15px; display: flex;
-    justify-content: space-between; align-items: center;
-}
+.user-bar { background: #fff; border: 1px solid #F5D5E0; border-radius: 14px; padding: 12px 16px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
 .user-bar .email { color: #B56B82; font-size: 13px; font-weight: 600; }
-.user-bar button {
-    background: #FCEAEA; color: #C75B5B;
-    border: 1px solid #E8A4A4; padding: 8px 16px;
-    border-radius: 10px; font-size: 13px; cursor: pointer;
-    font-family: inherit; font-weight: 600;
-}
+.user-bar button { background: #FCEAEA; color: #C75B5B; border: 1px solid #E8A4A4; padding: 8px 16px; border-radius: 10px; font-size: 13px; cursor: pointer; font-family: inherit; font-weight: 600; }
 
-/* تب‌ها */
-.tabs {
-    display: flex; gap: 8px; margin-bottom: 15px;
-    border-bottom: 1px solid #F5D5E0; padding-bottom: 10px;
-    overflow-x: auto;
-}
-.tabs button {
-    background: transparent; border: none;
-    padding: 10px 16px; border-radius: 10px;
-    font-family: inherit; font-size: 14px; font-weight: 600;
-    color: #A09098; cursor: pointer; white-space: nowrap;
-}
-.tabs button.active {
-    background: #FBEDF2; color: #B56B82;
-}
+.tabs { display: flex; gap: 8px; margin-bottom: 15px; border-bottom: 1px solid #F5D5E0; padding-bottom: 10px; overflow-x: auto; }
+.tabs button { background: transparent; border: none; padding: 10px 16px; border-radius: 10px; font-family: inherit; font-size: 14px; font-weight: 600; color: #A09098; cursor: pointer; white-space: nowrap; }
+.tabs button.active { background: #FBEDF2; color: #B56B82; }
 
-.add-btn {
-    width: 100%; padding: 15px;
-    background: linear-gradient(135deg, #B56B82, #96506A);
-    color: #fff; border: none; border-radius: 14px;
-    font-size: 14px; font-weight: 700; cursor: pointer;
-    font-family: inherit; margin-bottom: 15px;
-    box-shadow: 0 6px 20px rgba(181, 107, 130, 0.25);
-}
+.add-btn { width: 100%; padding: 15px; background: linear-gradient(135deg, #B56B82, #96506A); color: #fff; border: none; border-radius: 14px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; margin-bottom: 15px; box-shadow: 0 6px 20px rgba(181, 107, 130, 0.25); }
 
-.item {
-    background: #fff; border: 1px solid #F5D5E0;
-    border-radius: 16px; padding: 16px; margin-bottom: 12px;
-    box-shadow: 0 2px 10px rgba(181, 107, 130, 0.05);
-}
+.item { background: #fff; border: 1px solid #F5D5E0; border-radius: 16px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 10px rgba(181, 107, 130, 0.05); }
 .item .row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
 .item .field { flex: 1; min-width: 100px; }
 .item label { display: block; font-size: 11px; color: #A09098; margin-bottom: 4px; font-weight: 600; }
-.item input, .item select, .item textarea {
-    width: 100%; padding: 10px 12px; border-radius: 10px;
-    border: 1px solid #F5D5E0; background: #FEFAFB;
-    color: #3D2C38; font-family: inherit; font-size: 13px;
-    outline: none;
-}
+.item input, .item select, .item textarea { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #F5D5E0; background: #FEFAFB; color: #3D2C38; font-family: inherit; font-size: 13px; outline: none; }
 .item input:focus, .item select:focus, .item textarea:focus { border-color: #D48CA0; }
 .item textarea { resize: vertical; min-height: 60px; }
-
-.item .item-img-preview {
-    width: 70px; height: 70px; border-radius: 12px;
-    object-fit: cover; border: 2px solid #F5D5E0;
-    background: #FBEDF2; flex-shrink: 0;
-}
-
-.item .upload-btn {
-    background: #FBEDF2; color: #96506A;
-    border: 1px dashed #D48CA0; padding: 10px 16px;
-    border-radius: 10px; font-size: 12px;
-    font-family: inherit; font-weight: 600;
-    cursor: pointer; white-space: nowrap;
-}
+.item .item-img-preview { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; border: 2px solid #F5D5E0; background: #FBEDF2; flex-shrink: 0; }
+.item .upload-btn { background: #FBEDF2; color: #96506A; border: 1px dashed #D48CA0; padding: 10px 16px; border-radius: 10px; font-size: 12px; font-family: inherit; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .item .upload-btn:hover { background: #F5D5E0; }
+.item .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+.item .delete-btn { background: #FCEAEA; color: #C75B5B; border: 1px solid #E8A4A4; padding: 8px 16px; border-radius: 10px; font-size: 12px; cursor: pointer; font-family: inherit; font-weight: 600; }
 
-.item .actions {
-    display: flex; justify-content: flex-end;
-    gap: 8px; margin-top: 10px;
-}
-.item .delete-btn {
-    background: #FCEAEA; color: #C75B5B;
-    border: 1px solid #E8A4A4; padding: 8px 16px;
-    border-radius: 10px; font-size: 12px;
-    cursor: pointer; font-family: inherit; font-weight: 600;
-}
-
-.save-bar {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-    border-top: 1px solid #F5D5E0;
-    padding: 12px 15px; display: flex; gap: 8px; z-index: 100;
-}
-.save-bar button {
-    flex: 1; padding: 15px; border-radius: 12px;
-    border: none; font-family: inherit; font-weight: 700;
-    font-size: 14px; cursor: pointer;
-}
-.save-bar .save {
-    background: #B56B82; color: #fff;
-    box-shadow: 0 6px 20px rgba(181, 107, 130, 0.3);
-}
+.save-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); border-top: 1px solid #F5D5E0; padding: 12px 15px; display: flex; gap: 8px; z-index: 100; }
+.save-bar button { flex: 1; padding: 15px; border-radius: 12px; border: none; font-family: inherit; font-weight: 700; font-size: 14px; cursor: pointer; }
+.save-bar .save { background: #B56B82; color: #fff; box-shadow: 0 6px 20px rgba(181, 107, 130, 0.3); }
 .save-bar .save:disabled { background: #EEE; color: #A09098; cursor: not-allowed; box-shadow: none; }
 
-.status {
-    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-    padding: 14px 28px; border-radius: 30px;
-    font-size: 14px; font-weight: 700; z-index: 9999;
-    display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    max-width: 90%; text-align: center;
-}
+.status { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 14px 28px; border-radius: 30px; font-size: 14px; font-weight: 700; z-index: 9999; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15); max-width: 90%; text-align: center; }
 .status.success { background: #27ae60; color: #fff; display: block; }
 .status.error { background: #e74c3c; color: #fff; display: block; }
 .status.loading { background: #B56B82; color: #fff; display: block; }
-
 .empty { text-align: center; color: #A09098; padding: 40px; font-size: 14px; }
 </style>
 </head>
 <body>
 
-<!-- Login Screen -->
 <div id="loginScreen">
     <h2>🔐 ورود به پنل مدیریت</h2>
     <div class="err" id="loginError"></div>
@@ -168,71 +65,31 @@ h1 { color: #B56B82; text-align: center; font-size: 22px; margin-bottom: 5px; }
     <button onclick="login()">ورود</button>
 </div>
 
-<!-- Admin Panel -->
 <div id="adminPanel">
     <h1>⚙️ پنل مدیریت حور</h1>
     <p class="subtitle">محصولات و تنظیمات سایت رو مدیریت کن</p>
-
     <div class="user-bar">
         <span class="email" id="userEmail">-</span>
         <button onclick="logout()">خروج</button>
     </div>
-
-    <!-- تب‌ها -->
     <div class="tabs">
         <button class="active" onclick="switchTab('products', this)">👕 محصولات</button>
         <button onclick="switchTab('settings', this)">⚙️ تنظیمات سایت</button>
     </div>
-
-    <!-- تب محصولات -->
     <div id="tab-products">
         <button class="add-btn" onclick="addNewItem()">➕ افزودن محصول جدید</button>
         <div id="itemsList"></div>
     </div>
-
-    <!-- تب تنظیمات سایت -->
     <div id="tab-settings" style="display:none;">
         <div class="item" style="background:#fff; padding: 20px; border-radius: 16px; border: 1px solid #F5D5E0;">
-            <div class="row">
-                <div class="field">
-                    <label>متن اصلی هدر (زیر لوگو)</label>
-                    <input type="text" id="set-hero-text">
-                </div>
-            </div>
-            <div class="row">
-                <div class="field">
-                    <label>زیرنویس هدر</label>
-                    <input type="text" id="set-hero-subtitle">
-                </div>
-            </div>
-            <div class="row">
-                <div class="field">
-                    <label>متن درباره ما</label>
-                    <textarea id="set-about-text" style="min-height: 100px;"></textarea>
-                </div>
-            </div>
-            <div class="row">
-                <div class="field">
-                    <label>شماره تماس</label>
-                    <input type="text" id="set-phone">
-                </div>
-                <div class="field">
-                    <label>آیدی اینستاگرام</label>
-                    <input type="text" id="set-instagram">
-                </div>
-            </div>
-            <div class="row">
-                <div class="field">
-                    <label>آدرس فروشگاه</label>
-                    <input type="text" id="set-address">
-                </div>
-            </div>
+            <div class="row"><div class="field"><label>متن اصلی هدر (زیر لوگو)</label><input type="text" id="set-hero-text"></div></div>
+            <div class="row"><div class="field"><label>زیرنویس هدر</label><input type="text" id="set-hero-subtitle"></div></div>
+            <div class="row"><div class="field"><label>متن درباره ما</label><textarea id="set-about-text" style="min-height: 100px;"></textarea></div></div>
+            <div class="row"><div class="field"><label>شماره تماس</label><input type="text" id="set-phone"></div><div class="field"><label>آیدی اینستاگرام</label><input type="text" id="set-instagram"></div></div>
+            <div class="row"><div class="field"><label>آدرس فروشگاه</label><input type="text" id="set-address"></div></div>
         </div>
     </div>
-
-    <div class="save-bar">
-        <button class="save" id="saveBtn" onclick="saveChanges()">💾 ذخیره تغییرات</button>
-    </div>
+    <div class="save-bar"><button class="save" id="saveBtn" onclick="saveChanges()">💾 ذخیره تغییرات</button></div>
 </div>
 
 <div class="status" id="status"></div>
@@ -248,56 +105,53 @@ var newItems = [];
 var settings = {};
 var currentTab = 'products';
 
+// فقط سعی کن به دیتابیس وصل بشی
 if (typeof window.supabase !== 'undefined') {
     db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+} else {
+    document.getElementById('loginError').textContent = 'خطا در لود Supabase';
 }
 
-checkAuth();
-
-async function checkAuth() {
-    if (!db) { showStatus('خطا در اتصال به دیتابیس', 'error'); return; }
-    var session = await db.auth.getSession();
-    if (session.data.session) {
-        showAdminPanel();
-        loadItems();
-        loadSettings();
-    } else {
-        showLoginScreen();
-    }
-}
-
-function showLoginScreen() {
-    document.getElementById('loginScreen').style.display = 'block';
-    document.getElementById('adminPanel').style.display = 'none';
-}
-
-function showAdminPanel() {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('adminPanel').style.display = 'block';
-}
+// ⚠️ اینجا دیگه checkAuth() رو صدا نمی‌زنیم
+// و مستقیم صفحه لاگین رو نشون می‌دیم
 
 async function login() {
+    if (!db) { document.getElementById('loginError').textContent = 'اتصال به دیتابیس برقرار نیست'; return; }
+    
     var email = document.getElementById('email').value.trim();
     var password = document.getElementById('password').value;
     var errEl = document.getElementById('loginError');
+    
     if (!email || !password) { errEl.textContent = 'ایمیل و رمز را وارد کنید'; return; }
+    
     errEl.textContent = '';
     showStatus('در حال ورود...', 'loading');
-    var result = await db.auth.signInWithPassword({ email: email, password: password });
-    if (result.error) { errEl.textContent = 'خطا: ' + result.error.message; hideStatus(); return; }
-    hideStatus();
-    showAdminPanel();
-    document.getElementById('userEmail').textContent = email;
-    loadItems();
-    loadSettings();
+    
+    try {
+        var result = await db.auth.signInWithPassword({ email: email, password: password });
+        if (result.error) { 
+            errEl.textContent = 'خطا: ' + result.error.message; 
+            hideStatus(); 
+            return; 
+        }
+        
+        hideStatus();
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        document.getElementById('userEmail').textContent = email;
+        loadItems();
+        loadSettings();
+    } catch(e) {
+        hideStatus();
+        errEl.textContent = 'خطای غیرمنتظره: ' + e.message;
+    }
 }
 
 async function logout() {
-    await db.auth.signOut();
+    if (db) await db.auth.signOut();
     location.reload();
 }
 
-// ===== تب‌ها =====
 function switchTab(tabName, btn) {
     currentTab = tabName;
     document.querySelectorAll('.tabs button').forEach(function(b) { b.classList.remove('active'); });
@@ -306,16 +160,11 @@ function switchTab(tabName, btn) {
     document.getElementById('tab-settings').style.display = tabName === 'settings' ? 'block' : 'none';
 }
 
-// ===== محصولات =====
 async function loadItems() {
     showStatus('در حال بارگذاری...', 'loading');
     var result = await db.from('products').select('*').order('created_at', { ascending: false });
     if (result.error) { showStatus('خطا: ' + result.error.message, 'error'); return; }
     allItems = result.data || [];
-    var session = await db.auth.getSession();
-    if (session.data.session) {
-        document.getElementById('userEmail').textContent = session.data.session.user.email;
-    }
     hideStatus();
     renderItems();
 }
@@ -409,7 +258,6 @@ async function uploadImage(event, itemId) {
     setTimeout(function() { renderItems(); }, 500);
 }
 
-// ===== تنظیمات سایت =====
 async function loadSettings() {
     var result = await db.from('settings').select('*').eq('id', 1).single();
     if (result.error || !result.data) return;
@@ -422,12 +270,10 @@ async function loadSettings() {
     document.getElementById('set-address').value = settings.address || '';
 }
 
-// ===== ذخیره همه =====
 async function saveChanges() {
     document.getElementById('saveBtn').disabled = true;
     showStatus('⏳ در حال ذخیره...', 'loading');
     try {
-        // محصولات
         if (deletedItems.length > 0) {
             var delResult = await db.from('products').delete().in('id', deletedItems);
             if (delResult.error) throw delResult.error;
@@ -445,7 +291,6 @@ async function saveChanges() {
             if (insResult.error) throw insResult.error;
         }
 
-        // تنظیمات
         var settingsUpdate = {
             hero_text: document.getElementById('set-hero-text').value,
             hero_subtitle: document.getElementById('set-hero-subtitle').value,
