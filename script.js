@@ -659,7 +659,8 @@ async function loadSettings() {
         console.error('Error loading settings:', e);
     }
 }
-
 function openRules() {
     openPage('rulesPage');
 }
+
+window.openRules = openRules;
