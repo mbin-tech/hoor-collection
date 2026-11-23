@@ -661,18 +661,5 @@ async function loadSettings() {
 }
 
 function openRules() {
-    if (typeof toggleMenu === 'function') {
-        toggleMenu();
-    }
-
-    if (typeof openPage === 'function') {
-        openPage('rulesPage');
-    } else {
-        const page = document.getElementById('rulesPage');
-
-        if (page) {
-            page.style.display = 'block';
-        }
-    }
+    openPage('rulesPage');
 }
-
