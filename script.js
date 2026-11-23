@@ -659,3 +659,20 @@ async function loadSettings() {
         console.error('Error loading settings:', e);
     }
 }
+
+function openRules() {
+    if (typeof toggleMenu === 'function') {
+        toggleMenu();
+    }
+
+    if (typeof openPage === 'function') {
+        openPage('rulesPage');
+    } else {
+        const page = document.getElementById('rulesPage');
+
+        if (page) {
+            page.style.display = 'block';
+        }
+    }
+}
+
