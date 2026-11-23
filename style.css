@@ -1775,3 +1775,127 @@ img { max-width: 100%; display: block; }
 .category-card:hover .category-icon {
     transform: scale(1.1);
 }
+/* ===== RULES PAGE ===== */
+
+.rules-body {
+    padding: 18px 16px 35px;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.rules-hero {
+    background: linear-gradient(135deg, #fff0f4, #fff9fb);
+    border: 1px solid #f4dce4;
+    border-radius: 22px;
+    padding: 24px 18px;
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.rules-hero-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    background: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 27px;
+    margin: 0 auto 12px;
+    box-shadow: 0 5px 18px rgba(168, 93, 115, .10);
+}
+
+.rules-hero h3 {
+    color: #8f5268;
+    font-size: 17px;
+    margin: 0 0 8px;
+}
+
+.rules-hero p {
+    color: #8c7b82;
+    font-size: 12px;
+    margin: 0;
+    line-height: 1.9;
+}
+
+.rules-card {
+    background: #fff;
+    border: 1px solid #f1e2e7;
+    border-radius: 17px;
+    padding: 17px 16px;
+    margin: 12px 0;
+    box-shadow: 0 5px 18px rgba(90, 45, 60, .035);
+}
+
+.rules-card-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #8f5268;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.rules-card-title span {
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+    background: #fff0f4;
+    display: grid;
+    place-items: center;
+    font-size: 17px;
+}
+
+.rules-card p {
+    font-size: 12px;
+    line-height: 2.1;
+    color: #65565c;
+    margin: 0 0 8px;
+}
+
+.rules-card p:last-child {
+    margin-bottom: 0;
+}
+
+.rules-contact {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: #fff0f4;
+    border-radius: 17px;
+    padding: 17px;
+    margin-top: 18px;
+    color: #8f5268;
+}
+
+.rules-contact > span {
+    font-size: 24px;
+}
+
+.rules-contact strong {
+    font-size: 14px;
+}
+
+.rules-contact p {
+    font-size: 12px;
+    color: #76636b;
+    margin: 5px 0 10px;
+}
+
+.rules-contact a {
+    display: inline-block;
+    color: #a34f70;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 13px;
+    margin-top: 4px;
+}
+
+.rules-note {
+    text-align: center;
+    color: #a18d95;
+    font-size: 10px;
+    line-height: 1.9;
+    margin: 15px 5px 0;
+}
