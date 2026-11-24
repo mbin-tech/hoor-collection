@@ -583,20 +583,15 @@ async function payWithTorobPay() {
             payment_method: 'torobpay'
         }]);
 
-        if (error) throw error;
+        if (error) {
+            console.error('DB Error:', error);
+            showToast('خطا در ثبت سفارش');
+            return;
+        }
 
         // ۲. ارسال پیام به تلگرام
         var TELEGRAM_TOKEN = '9268175476:AAHRxwEdj_hhWqe8o80bb5grSbYa5dH4HeU';
         var TELEGRAM_CHAT_ID = '6671398575'; 
-        if (confirm('سفارش ثبت شد. برای تست، می‌خواهی به ترب پی بروی؟ (برای پرداخت واقعی، بله را بزن)')) {
-    window.location.href = 'https://torobpay.com/pay/00287566';
-} else {
-    showToast('سفارش تستی ثبت شد. سبد خرید خالی شد.');
-    cart = [];
-    saveCart();
-    updateCartBar();
-    closePage('checkoutPage');
-        }
         
         var message = '🛍 سفارش جدید حور کالکشن\n\n' +
                       '👤 نام: ' + name + '\n' +
@@ -608,11 +603,21 @@ async function payWithTorobPay() {
         fetch('https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage?chat_id=' + TELEGRAM_CHAT_ID + '&text=' + encodeURIComponent(message))
             .catch(function(e){ console.log('Telegram error', e); });
 
-        showToast('سفارش ثبت شد؛ انتقال به ترب‌پی...');
-        window.open('https://torobpay.com/pay/00287566', '_blank');
+        // ۳. خالی کردن سبد خرید
+        cart = [];
+        saveCart();
+        updateCartBar();
+
+        // ۴. انتقال به ترب پی یا تست
+        if (confirm('سفارش ثبت شد. برای تست، می‌خواهی به ترب پی بروی؟ (برای پرداخت واقعی، بله را بزن)')) {
+            window.location.href = 'https://torobpay.com/pay/00287566';
+        } else {
+            showToast('سفارش تستی ثبت شد. سبد خرید خالی شد.');
+            closePage('checkoutPage');
+        }
 
     } catch (error) {
-        console.error(error); 
+        console.error('Catch Error:', error); 
         showToast('خطا در ثبت سفارش');
     }
 }
@@ -665,7 +670,7 @@ async function loadSettings() {
 function initializeStore() {
     if (slidesCount > 0) { updateDots(); startSliderTimer(); }
     loadProductsFromSupabase();
-    loadSettings(); // ⚠️ این خط رو اضافه کردم تا تنظیمات لود بشه
+    loadSettings();
     updateCartBar();
     checkUserLogin();
 }
