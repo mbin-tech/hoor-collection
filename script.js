@@ -559,7 +559,7 @@ function checkout() {
     openPage('checkoutPage');
 }
 
-// ===== PAYMENT =====
+// ===== PAYMENT & TELEGRAM =====
 async function payWithTorobPay() {
     var name = document.getElementById('checkoutName').value.trim();
     var phone = document.getElementById('checkoutPhone').value.trim();
@@ -571,24 +571,92 @@ async function payWithTorobPay() {
 
     try {
         showToast('در حال ثبت سفارش...');
+
+        // ۱. ذخیره سفارش تو دیتابیس
         const { error } = await db.from('orders').insert([{
-            customer_name: name, phone: phone, address: address, items: cart, total: total, status: 'pending', payment_method: 'torobpay'
+            customer_name: name, 
+            phone: phone, 
+            address: address, 
+            items: cart, 
+            total: total, 
+            status: 'pending', 
+            payment_method: 'torobpay'
         }]);
+
         if (error) throw error;
+
+        // ۲. ارسال پیام به تلگرام
+        var TELEGRAM_TOKEN = '9268175476:AAHRxwEdj_hhWqe8o80bb5grSbYa5dH4HeU';
+        var TELEGRAM_CHAT_ID = '6671398575';
+        
+        var message = '🛍 سفارش جدید حور کالکشن\n\n' +
+                      '👤 نام: ' + name + '\n' +
+                      '📞 موبایل: ' + phone + '\n' +
+                      '📍 آدرس: ' + address + '\n' +
+                      '💰 مبلغ: ' + total.toLocaleString() + ' تومان\n' +
+                      '📦 محصولات: ' + cart.map(function(i){return i.name + ' (' + i.qty + ')';}).join(', ');
+
+        fetch('https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage?chat_id=' + TELEGRAM_CHAT_ID + '&text=' + encodeURIComponent(message))
+            .catch(function(e){ console.log('Telegram error', e); });
 
         showToast('سفارش ثبت شد؛ انتقال به ترب‌پی...');
         window.open('https://torobpay.com/pay/00287566', '_blank');
+
     } catch (error) {
-        console.error(error); showToast('خطا در ثبت سفارش');
+        console.error(error); 
+        showToast('خطا در ثبت سفارش');
     }
 }
 
 function payWithZarinpal() { showToast('درگاه زرین‌پال در حال راه‌اندازی است...'); }
 
+// ===== LOAD SITE SETTINGS =====
+async function loadSettings() {
+    try {
+        const { data, error } = await db.from('settings').select('*').eq('id', 1).single();
+        if (error) throw error;
+        if (!data) return;
+
+        var subLines = document.querySelectorAll('.landing-sub .sub-line');
+        if (subLines.length >= 2) {
+            subLines[0].textContent = data.hero_text || 'پروانه‌ای برای بال‌های تو';
+            subLines[1].textContent = data.hero_subtitle || 'پوشاک زنانه اسپرت با طعم لطافت';
+        }
+
+        var aboutTexts = document.querySelectorAll('#aboutPage .about-text');
+        if (aboutTexts.length > 0 && data.about_text) {
+            aboutTexts[0].textContent = data.about_text;
+        }
+
+        var contactValues = document.querySelectorAll('#contactPage .contact-value');
+        if (contactValues.length > 0) {
+            if (data.phone) contactValues[0].textContent = data.phone;
+        }
+        if (contactValues.length >= 4 && data.address) {
+            contactValues[3].textContent = data.address;
+        }
+        if (contactValues.length >= 3 && data.instagram) {
+            contactValues[2].textContent = '@' + data.instagram;
+        }
+
+        var footerItems = document.querySelectorAll('.footer-item');
+        if (footerItems.length > 0 && data.address) {
+            footerItems[0].innerHTML = '<span class="icon">📍</span> ' + data.address;
+        }
+        if (footerItems.length > 3 && data.phone) {
+            footerItems[3].innerHTML = '<span class="icon">📞</span> ' + data.phone;
+        }
+
+    } catch (e) {
+        console.error('Error loading settings:', e);
+    }
+}
+
 // ===== INIT =====
 function initializeStore() {
     if (slidesCount > 0) { updateDots(); startSliderTimer(); }
-    loadProductsFromSupabase(); // ⚠️ این خط محصولات رو از دیتابیس می‌خونه
+    loadProductsFromSupabase();
+    loadSettings(); // ⚠️ این خط رو اضافه کردم تا تنظیمات لود بشه
     updateCartBar();
     checkUserLogin();
 }
@@ -610,57 +678,3 @@ window.checkout = checkout;
 window.openCart = openCart;
 window.changeQty = changeQty;
 window.showToast = showToast;
-// ===== LOAD SITE SETTINGS =====
-async function loadSettings() {
-    try {
-        const { data, error } = await db.from('settings').select('*').eq('id', 1).single();
-        if (error) throw error;
-        if (!data) return;
-
-        // آپدیت متن لندینگ
-        var subLines = document.querySelectorAll('.landing-sub .sub-line');
-        if (subLines.length >= 2) {
-            subLines[0].textContent = data.hero_text || 'پروانه‌ای برای بال‌های تو';
-            subLines[1].textContent = data.hero_subtitle || 'پوشاک زنانه اسپرت با طعم لطافت';
-        }
-
-        // آپدیت متن درباره ما
-        var aboutTexts = document.querySelectorAll('#aboutPage .about-text');
-        if (aboutTexts.length > 0 && data.about_text) {
-            aboutTexts[0].textContent = data.about_text;
-        }
-
-        // آپدیت شماره تماس و آدرس
-        var contactValues = document.querySelectorAll('#contactPage .contact-value');
-        if (contactValues.length > 0) {
-            if (data.phone) contactValues[0].textContent = data.phone;
-        }
-        var contactAddress = document.querySelectorAll('#contactPage .contact-value');
-        if (contactAddress.length >= 4 && data.address) {
-            contactAddress[3].textContent = data.address;
-        }
-
-        // آپدیت اینستاگرام
-        var instaLink = document.querySelectorAll('#contactPage .contact-value');
-        if (instaLink.length >= 3 && data.instagram) {
-            instaLink[2].textContent = '@' + data.instagram;
-        }
-
-        // آپدیت فوتر
-        var footerItems = document.querySelectorAll('.footer-item');
-        if (footerItems.length > 0 && data.address) {
-            footerItems[0].innerHTML = '<span class="icon">📍</span> ' + data.address;
-        }
-        if (footerItems.length > 3 && data.phone) {
-            footerItems[3].innerHTML = '<span class="icon">📞</span> ' + data.phone;
-        }
-
-    } catch (e) {
-        console.error('Error loading settings:', e);
-    }
-}
-function openRules() {
-    openPage('rulesPage');
-}
-
-window.openRules = openRules;
