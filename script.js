@@ -587,7 +587,16 @@ async function payWithTorobPay() {
 
         // ۲. ارسال پیام به تلگرام
         var TELEGRAM_TOKEN = '9268175476:AAHRxwEdj_hhWqe8o80bb5grSbYa5dH4HeU';
-        var TELEGRAM_CHAT_ID = '6671398575';
+        var TELEGRAM_CHAT_ID = '6671398575'; 
+        if (confirm('سفارش ثبت شد. برای تست، می‌خواهی به ترب پی بروی؟ (برای پرداخت واقعی، بله را بزن)')) {
+    window.location.href = 'https://torobpay.com/pay/00287566';
+} else {
+    showToast('سفارش تستی ثبت شد. سبد خرید خالی شد.');
+    cart = [];
+    saveCart();
+    updateCartBar();
+    closePage('checkoutPage');
+        }
         
         var message = '🛍 سفارش جدید حور کالکشن\n\n' +
                       '👤 نام: ' + name + '\n' +
